@@ -38,6 +38,7 @@ class RepeatEvery(threading.Thread):
 
         threading.Thread.__init__(self)     
         self.object =object  # seconds between calls
+        self.window_object = window_object
         self.runable = True
 
     def run(self):
@@ -47,16 +48,13 @@ class RepeatEvery(threading.Thread):
             time.sleep(1)
                  
             self.object.power_time = self.object.power_time - 1
-        window_object.flying=False
+        self.window_object.flying=False
 
     def stop(self):
         self.runable = False
 
 ###################################################
 
-
-if sys.version_info[0] >= 3:
-    xrange = range
 
 def cube_vertices(x, y, z, n):
     """ Return the vertices of the cube at position x, y, z with size 2*n.

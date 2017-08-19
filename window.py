@@ -8,6 +8,8 @@ from pyglet import image
 from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
+import  model as mod_
+import player as plyr_
 class Window(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
@@ -16,20 +18,6 @@ class Window(pyglet.window.Window):
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
 
-        # When flying var_.GRAVITY has no effect and speed is increased.
-        self.flying = False
-
-        # Strafing is moving lateral to the direction you are facing,
-        # e.g. moving to the left or right while continuing to face forward.
-        #
-        # First element is -1 when moving forward, 1 when moving back, and 0
-        # otherwise. The second element is -1 when moving left, 1 when moving
-        # right, and 0 otherwise.
-        self.strafe = [0, 0]
-
-        # Current (x, y, z) position in the world, specified with floats. Note
-        # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 0, 0)
 
         # First element is rotation of the player in the x-z plane (ground
         # plane) measured from the z-axis down. The second is the rotation
@@ -61,6 +49,7 @@ class Window(pyglet.window.Window):
 
         # Instance of the model that handles the world.
         self.model = mod_.Model()
+        self.plyr = plyr_.Player(self.model.batch)
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
@@ -107,19 +96,19 @@ class Window(pyglet.window.Window):
             Tuple containing the velocity in x, y, and z respectively.
 
         """
-        if any(self.strafe):
+        if any(self.plyr.strafe):
             x, y = self.rotation
-            strafe = math.degrees(math.atan2(*self.strafe))
+            strafe = math.degrees(math.atan2(*self.plyr.strafe))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
-            if self.flying:
+            if self.plyr.flying:
                 m = math.cos(y_angle)
                 dy = math.sin(y_angle)
-                if self.strafe[1]:
+                if self.plyr.strafe[1]:
                     # Moving left or right.
                     dy = 0.0
                     m = 1
-                if self.strafe[0] > 0:
+                if self.plyr.strafe[0] > 0:
                     # Moving backwards.
                     dy *= -1
                 # When you are flying up or down, you have less left and right
@@ -147,7 +136,7 @@ class Window(pyglet.window.Window):
 
         """
         self.model.process_queue()
-        sector = var_.sectorize(self.position)
+        sector = var_.sectorize(self.plyr.position)
         if sector != self.sector:
             self.model.change_sectors(self.sector, sector)
             if self.sector is None:
@@ -169,13 +158,13 @@ class Window(pyglet.window.Window):
 
         """
         # walking
-        speed = var_.FLYING_SPEED if self.flying else var_.WALKING_SPEED
+        speed = var_.FLYING_SPEED if self.plyr.flying else var_.WALKING_SPEED
         d = dt * speed # distance covered this tick.
         dx, dy, dz = self.get_motion_vector()
         # New position in space, before accounting for var_.GRAVITY.
         dx, dy, dz = dx * d, dy * d, dz * d
         # var_.GRAVITY
-        if not self.flying:
+        if not self.plyr.flying:
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
             # start falling.
@@ -183,10 +172,10 @@ class Window(pyglet.window.Window):
             self.dy = max(self.dy, -var_.TERMINAL_VELOCITY)
             dy += self.dy * dt
         # collisions
-        x, y, z = self.position
+        x, y, z = self.plyr.position
         x, y, z = self.collide((x + dx, y + dy, z + dz), var_.PLAYER_HEIGHT)
-        self.checker(self.position)
-        self.position = (x, y, z)
+        self.checker(self.plyr.position)
+        self.plyr.position = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -253,7 +242,7 @@ class Window(pyglet.window.Window):
         """
         if self.exclusive:
             vector = self.get_sight_vector()
-            block, previous = self.model.hit_test(self.position, vector)
+            block, previous = self.model.hit_test(self.plyr.position, vector)
             if (button == mouse.RIGHT) or \
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # ON OSX, control + left click = right click.
@@ -287,15 +276,14 @@ class Window(pyglet.window.Window):
 
     def checker(self, position):
        # print(position)
-        print(self.flying)
+       # print(self.plyr.flying)
         for  k, v in var_.FEATURES.iteritems():
-            print(k," ",v)
+        #    print(k," ",v)
             if k[0] -2 <position[0]< k[0] + 4 and k[1] -2 <position[1]< k[1] + 4 and k[2] -2 <position[2]< k[2] + 4 and v== "fly":
-                self.flying = True
+                self.plyr.flying = True
 
-                thread=var_.RepeatEvery(self.model,self)
+                thread=var_.RepeatEvery(self.model,self.plyr)
                 thread.start()
-
                 del var_.FEATURES[k]
                 self.model.remove_block(k)
                 break
@@ -313,20 +301,20 @@ class Window(pyglet.window.Window):
 
         """
         if symbol == key.W:
-            self.strafe[0] -= 1
+            self.plyr.strafe[0] -= 1
         elif symbol == key.S:
-            self.strafe[0] += 1
+            self.plyr.strafe[0] += 1
         elif symbol == key.A:
-            self.strafe[1] -= 1
+            self.plyr.strafe[1] -= 1
         elif symbol == key.D:
-            self.strafe[1] += 1
+            self.plyr.strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
                 self.dy = var_.JUMP_SPEED
         elif symbol == key.ESCAPE:
             self.set_exclusive_mouse(not self.exclusive)
         elif symbol == key.TAB:
-            self.flying = not self.flying
+            self.plyr.flying = not self.plyr.flying
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
@@ -345,13 +333,13 @@ class Window(pyglet.window.Window):
 
         """
         if symbol == key.W:
-            self.strafe[0] += 1
+            self.plyr.strafe[0] += 1
         elif symbol == key.S:
-            self.strafe[0] -= 1
+            self.plyr.strafe[0] -= 1
         elif symbol == key.A:
-            self.strafe[1] += 1
+            self.plyr.strafe[1] += 1
         elif symbol == key.D:
-            self.strafe[1] -= 1
+            self.plyr.strafe[1] -= 1
 
     def on_resize(self, width, height):
         """ Called when the window is resized to a new `width` and `height`.
@@ -396,7 +384,7 @@ class Window(pyglet.window.Window):
         x, y = self.rotation
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = self.position
+        x, y, z = self.plyr.position
         glTranslatef(-x, -y, -z)
 
     def on_draw(self):
@@ -418,7 +406,7 @@ class Window(pyglet.window.Window):
 
         """
         vector = self.get_sight_vector()
-        block = self.model.hit_test(self.position, vector)[0]
+        block = self.model.hit_test(self.plyr.position, vector)[0]
         if block:
             x, y, z = block
             vertex_data = var_.cube_vertices(x, y, z, 0.51)
@@ -431,7 +419,7 @@ class Window(pyglet.window.Window):
         """ Draw the label in the top left of the screen.
 
         """
-        x, y, z = self.position
+        x, y, z = self.plyr.position
         
         self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d' % (
             pyglet.clock.get_fps(), x, y, z,
@@ -445,43 +433,4 @@ class Window(pyglet.window.Window):
         glColor3d(0, 0, 0)
         self.reticle.draw(GL_LINES)
 
-
-
-import  model as mod_
-def setup_fog():
-    """ Configure the OpenGL fog properties.
-
-    """
-    # Enable fog. Fog "blends a fog color with each rasterized pixel fragment's
-    # post-texturing color."
-    glEnable(GL_FOG)
-    # Set the fog color.
-    glFogfv(GL_FOG_COLOR, (GLfloat * 4)(0.5, 0.69, 1.0, 1))
-    # Say we have no preference between rendering speed and quality.
-    glHint(GL_FOG_HINT, GL_DONT_CARE)
-    # Specify the equation used to compute the blending factor.
-    glFogi(GL_FOG_MODE, GL_LINEAR)
-    # How close and far away fog starts and ends. The closer the start and end,
-    # the denser the fog in the fog range.
-    glFogf(GL_FOG_START, 20.0)
-    glFogf(GL_FOG_END, 60.0)
-
-
-def setup():
-    """ Basic OpenGL configuration.
-
-    """
-    # Set the color of "clear", i.e. the sky, in rgba.
-    glClearColor(0.5, 0.69, 1.0, 1)
-    # Enable culling (not rendering) of back-facing facets -- facets that aren't
-    # visible to you.
-    glEnable(GL_CULL_FACE)
-    # Set the texture minification/magnification function to GL_NEAREST (nearest
-    # in Manhattan distance) to the specified texture coordinates. GL_NEAREST
-    # "is generally faster than GL_LINEAR, but it can produce textured images
-    # with sharper edges because the transition between texture elements is not
-    # as smooth."
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    setup_fog()
 

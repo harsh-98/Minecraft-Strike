@@ -43,6 +43,12 @@ class Model(object):
     def features(self):
         self.add_block((2, -1, 2), var_.COIN, immediate=False)
         var_.FEATURES[(2, -1, 2)] = "fly"
+#        self.add_block((2, 20, 3), var_.COIN, immediate=False)
+#        var_.FEATURES[(2, 20, 3)] = "fly"
+#        self.add_block((24, -1, 4), var_.COIN, immediate=False)
+#        var_.FEATURES[(24, -1, 4)] = "fly"
+#        self.add_block((23, -1, 2), var_.COIN, immediate=False)
+#        var_.FEATURES[(23, -1, 2)] = "fly"
 
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
