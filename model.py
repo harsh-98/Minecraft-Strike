@@ -18,7 +18,8 @@ class Model(object):
 
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
-
+        self.group1 = TextureGroup(image.load("images.jpg").get_texture())
+        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -49,6 +50,13 @@ class Model(object):
 #        var_.FEATURES[(24, -1, 4)] = "fly"
 #        self.add_block((23, -1, 2), var_.COIN, immediate=False)
 #        var_.FEATURES[(23, -1, 2)] = "fly"
+        self.tt((4,4,4))
+    def tt(self, position):
+        self._shown[position] = self.batch.add(4, GL_QUADS, self.group1,
+            ('v3f/static', var_.square_vertices(position, 1)),
+            ('t2f/static', [0,0,1,0,1,1,0,1]))
+
+
 
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
@@ -67,10 +75,20 @@ class Model(object):
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in   xrange(-2, 30):
-                        self.add_block((x, y + dy, z), var_.GRASS, immediate=False)
-
-        # generate the hills randomly
+                        self.add_block((x, y + dy, z), var_.STONE, immediate=False)
         o = n - 10
+        for _ in xrange(30):
+            a = random.randint(-o, o)  # x position of the hill
+            b = random.randint(-o, o)  # z position of the hill
+            y =  20  # base of the hill
+            t = random.choice([var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE])
+            h = random.randint(4, 12)  # height of the hill
+            s = random.randint(4, 15)
+            for z in xrange(a -h , a + h):
+                for x in xrange(b - s, b + s + 1):
+                    self.add_block((x, y, z), t, immediate=False)
+        # generate the hills randomly
+        
         for _ in xrange(240):
             a = random.randint(-o, o)  # x position of the hill
             b = random.randint(-o, o)  # z position of the hill
@@ -161,6 +179,7 @@ class Model(object):
             Whether or not to immediately remove block from canvas.
 
         """
+        print(position)
         del self.world[position]
         self.sectors[var_.sectorize(position)].remove(position)
         if immediate:

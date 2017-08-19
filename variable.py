@@ -69,6 +69,11 @@ def cube_vertices(x, y, z, n):
         x+n,y-n,z-n, x-n,y-n,z-n, x-n,y+n,z-n, x+n,y+n,z-n,  # back
     ]
 
+def square_vertices(t,n):
+    x=t[0]
+    y=t[1]
+    z=t[2]
+    return [x,y,z, x+n,y,z, x+n,y+n,z, x,y+n,z] 
 
 def tex_coord(x, y, n=4):
     """ Return the bounding vertices of the texture square.
@@ -93,6 +98,7 @@ def tex_coords(top, bottom, side):
     result.extend(side * 4)
     return result
 
+arr = tex_coords((1,1),(1,1),(1,1))
 
 TEXTURE_PATH = 'texture.png'
 
@@ -100,7 +106,12 @@ GRASS = tex_coords((1, 0), (0, 1), (0, 0))
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
 STONE = tex_coords((2, 1), (2, 1), (2, 1))
+RSTONE = tex_coords((0,3), (0,3), (0,3))
+SNOW = tex_coords((3,3), (3,2), (3,2))
+MARBLE = tex_coords((3,1), (3,1), (3,1))
+ALGAE = tex_coords((2,3), (2,3), (2,3))
 COIN = tex_coords((3,0),(3,0),(3,0))
+CEMENT = tex_coords((1,2), (1,2), (1,2))
 
 
 FACES = [
@@ -129,6 +140,7 @@ def normalize(position):
     x, y, z = position
     x, y, z = (int(round(x)), int(round(y)), int(round(z)))
     return (x, y, z)
+
 
 
 def sectorize(position):

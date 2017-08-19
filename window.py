@@ -175,7 +175,16 @@ class Window(pyglet.window.Window):
         x, y, z = self.plyr.position
         x, y, z = self.collide((x + dx, y + dy, z + dz), var_.PLAYER_HEIGHT)
         self.checker(self.plyr.position)
+        vertex_data = var_.cube_vertices(x, y, z, 0.5)
         self.plyr.position = (x, y, z)
+        self.model.world[self.plyr.previous] = var_.arr
+        if self.plyr.previous != None :
+            print(self.plyr.previous)
+          #  self.model.remove_block(self.plyr.previous, True, 2)
+        self.model.batch.add(24, GL_QUADS, self.model.group2,
+            ('v3f/static', vertex_data),
+            ('t2f/static', var_.arr))
+        self.plyr.previous = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
