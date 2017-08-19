@@ -9,6 +9,7 @@ from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 import variable as var_
 from collections import deque
+import arr as arr_
 class Model(object):
 
     def __init__(self):
@@ -76,36 +77,12 @@ class Model(object):
                     # create outer walls.
                     for dy in   xrange(-2, 30):
                         self.add_block((x, y + dy, z), var_.STONE, immediate=False)
-        o = n - 10
-        for _ in xrange(30):
-            a = random.randint(-o, o)  # x position of the hill
-            b = random.randint(-o, o)  # z position of the hill
-            y =  20  # base of the hill
-            t = random.choice([var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE])
-            h = random.randint(4, 12)  # height of the hill
-            s = random.randint(4, 15)
-            for z in xrange(a -h , a + h):
-                for x in xrange(b - s, b + s + 1):
-                    self.add_block((x, y, z), t, immediate=False)
-        # generate the hills randomly
-        
-        for _ in xrange(240):
-            a = random.randint(-o, o)  # x position of the hill
-            b = random.randint(-o, o)  # z position of the hill
-            c = -1  # base of the hill
-            h = random.randint(1, 6)  # height of the hill
-            s = random.randint(4, 8)  # 2 * s is the side length of the hill
-            d = 1  # how quickly to taper off the hills
-            t = random.choice([var_.GRASS, var_.SAND, var_.BRICK])
-            for y in xrange(c, c + h):
-                for x in xrange(a - s, a + s + 1):
-                    for z in xrange(b - s, b + s + 1):
-                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
-                            continue
-                        if (x - 0) ** 2 + (z - 0) ** 2 < 5 ** 2:
-                            continue
-                        self.add_block((x, y, z), t, immediate=False)
-                s -= d  # decrement side lenth so hills taper off
+        t=[var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE]
+        for d,e in zip(arr_.arr_h, arr_.arr_ht):
+                self.add_block(d,t[e+1], immediate=False)
+        t=[var_.GRASS, var_.SAND, var_.BRICK]
+        for d,e in zip(arr_.arr_h2, arr_.arr_h2t):
+                self.add_block(d,t[e+1], immediate=False)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is

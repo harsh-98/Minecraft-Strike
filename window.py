@@ -181,7 +181,8 @@ class Window(pyglet.window.Window):
         if self.plyr.previous != None :
             print(self.plyr.previous)
           #  self.model.remove_block(self.plyr.previous, True, 2)
-        self.model.batch.add(24, GL_QUADS, self.model.group2,
+            self.plyr._shown1.pop(self.plyr.previous).delete()
+        self.plyr._shown1[self.plyr.position] = self.model.batch.add(24, GL_QUADS, self.model.group2,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
         self.plyr.previous = (x, y, z)
