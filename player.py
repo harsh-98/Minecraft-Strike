@@ -1,9 +1,10 @@
 import pyglet 
 class Player:
-    def __init__(self,batch):
+    def __init__(self,plyr_id):
         # When flying var_.GRAVITY has no effect and speed is increased.
         self.flying = False
         self.power_time=0
+        self.plyr_id = plyr_id
         # Strafing is moving lateral to the direction you are facing,
         # e.g. moving to the left or right while continuing to face forward.
         #
@@ -11,7 +12,7 @@ class Player:
         # otherwise. The second element is -1 when moving left, 1 when moving
         # right, and 0 otherwise.
         self.strafe = [0, 0]
-        self.batch = batch
+       # self.batch = batch
 
         self._shown1 = {}
         # Current (x, y, z) position in the world, specified with floats. Note

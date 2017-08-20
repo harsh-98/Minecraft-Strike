@@ -156,7 +156,7 @@ class Model(object):
             Whether or not to immediately remove block from canvas.
 
         """
-        print(position)
+       # print(position)
         del self.world[position]
         self.sectors[var_.sectorize(position)].remove(position)
         if immediate:

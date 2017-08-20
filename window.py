@@ -10,10 +10,20 @@ from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 import  model as mod_
 import player as plyr_
-class Window(pyglet.window.Window):
+from PodSixNet.Connection import ConnectionListener, connection
+class Window(pyglet.window.Window, ConnectionListener):
 
     def __init__(self, *args, **kwargs):
         super(Window, self).__init__(*args, **kwargs)
+
+#######################################
+        self.Connect()
+        self.player_arr=[]
+        self.mainid=-1
+#######################################
+
+
+
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
@@ -49,16 +59,52 @@ class Window(pyglet.window.Window):
 
         # Instance of the model that handles the world.
         self.model = mod_.Model()
-        self.plyr = plyr_.Player(self.model.batch)
+       # self.player_arr[self.mainid] = [plyr_.Player(),plyr_.Player()]
+
+        self.running= False
 
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
             color=(0, 0, 0, 255))
-
+        while not self.running:
+            print self.running
+            connection.Pump()
+            self.Pump()
         # This call schedules the `update()` method to be called
         # var_.TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 1.0 / var_.TICKS_PER_SEC)
+
+
+
+    def i(self):
+        connection.Pump()
+        self.Pump()
+    def Network_init(self,data):
+    #    print "asdfghjk"
+        for i in data["player_arr"]:
+            self.player_arr.append(plyr_.Player(i))
+        self.mainid=data["player"]
+        self.running =True
+        print self.mainid
+        print self.player_arr
+
+    def Network_add(self, data):
+      #  self.hand = han_.Handler(data['gameID'], data['player'])
+        self.player_arr.append(plyr_.Player(data["player"]))
+       # self.hand.add_player(data['player'])
+
+    def Network_keyPress(self, data):
+        self.on_key_press(data['type'],data['extras'],1)
+    def Network_keyPR(self, data):
+        self.on_key_release(data['type'],data['extras'],1)
+    def Network_mouse_(self, data):
+        self.on_mouse_press(-1,-1,data['type'],data['extras'],1)
+    def Network_mouse_r(self, data):
+        self.on_mouse_motion(data['type']["x"],data['type']["y"],data['extras']["dx"],data['extras']["dy"],1)
+
+
+
 
     def set_exclusive_mouse(self, exclusive):
         """ If `exclusive` is True, the game will capture the mouse, if False
@@ -96,19 +142,19 @@ class Window(pyglet.window.Window):
             Tuple containing the velocity in x, y, and z respectively.
 
         """
-        if any(self.plyr.strafe):
+        if any(self.player_arr[self.mainid].strafe):
             x, y = self.rotation
-            strafe = math.degrees(math.atan2(*self.plyr.strafe))
+            strafe = math.degrees(math.atan2(*self.player_arr[self.mainid].strafe))
             y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
-            if self.plyr.flying:
+            if self.player_arr[self.mainid].flying:
                 m = math.cos(y_angle)
                 dy = math.sin(y_angle)
-                if self.plyr.strafe[1]:
+                if self.player_arr[self.mainid].strafe[1]:
                     # Moving left or right.
                     dy = 0.0
                     m = 1
-                if self.plyr.strafe[0] > 0:
+                if self.player_arr[self.mainid].strafe[0] > 0:
                     # Moving backwards.
                     dy *= -1
                 # When you are flying up or down, you have less left and right
@@ -135,8 +181,9 @@ class Window(pyglet.window.Window):
             The change in time since the last call.
 
         """
+        self.i()
         self.model.process_queue()
-        sector = var_.sectorize(self.plyr.position)
+        sector = var_.sectorize(self.player_arr[self.mainid].position)
         if sector != self.sector:
             self.model.change_sectors(self.sector, sector)
             if self.sector is None:
@@ -158,13 +205,13 @@ class Window(pyglet.window.Window):
 
         """
         # walking
-        speed = var_.FLYING_SPEED if self.plyr.flying else var_.WALKING_SPEED
+        speed = var_.FLYING_SPEED if self.player_arr[self.mainid].flying else var_.WALKING_SPEED
         d = dt * speed # distance covered this tick.
         dx, dy, dz = self.get_motion_vector()
         # New position in space, before accounting for var_.GRAVITY.
         dx, dy, dz = dx * d, dy * d, dz * d
         # var_.GRAVITY
-        if not self.plyr.flying:
+        if not self.player_arr[self.mainid].flying:
             # Update your vertical speed: if you are falling, speed up until you
             # hit terminal velocity; if you are jumping, slow down until you
             # start falling.
@@ -172,20 +219,20 @@ class Window(pyglet.window.Window):
             self.dy = max(self.dy, -var_.TERMINAL_VELOCITY)
             dy += self.dy * dt
         # collisions
-        x, y, z = self.plyr.position
+        x, y, z = self.player_arr[self.mainid].position
         x, y, z = self.collide((x + dx, y + dy, z + dz), var_.PLAYER_HEIGHT)
-        self.checker(self.plyr.position)
+        self.checker((x,y,z))
         vertex_data = var_.cube_vertices(x, y, z, 0.5)
-        self.plyr.position = (x, y, z)
-        self.model.world[self.plyr.previous] = var_.arr
-        if self.plyr.previous != None :
-            print(self.plyr.previous)
-          #  self.model.remove_block(self.plyr.previous, True, 2)
-            self.plyr._shown1.pop(self.plyr.previous).delete()
-        self.plyr._shown1[self.plyr.position] = self.model.batch.add(24, GL_QUADS, self.model.group2,
+        self.player_arr[self.mainid].position = (x, y, z)
+        self.model.world[self.player_arr[self.mainid].previous] = var_.arr
+        if self.player_arr[self.mainid].previous != None :
+         #   print(self.player_arr[self.mainid].previous)
+          #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
+            self.player_arr[self.mainid]._shown1.pop(self.player_arr[self.mainid].previous).delete()
+        self.player_arr[self.mainid]._shown1[self.player_arr[self.mainid].position] = self.model.batch.add(24, GL_QUADS, self.model.group2,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
-        self.plyr.previous = (x, y, z)
+        self.player_arr[self.mainid].previous = (x, y, z)
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -233,7 +280,7 @@ class Window(pyglet.window.Window):
                     break
         return tuple(p)
 
-    def on_mouse_press(self, x, y, button, modifiers):
+    def on_mouse_press(self, x, y, button, modifiers,tmp = 0):
         """ Called when a mouse button is pressed. See pyglet docs for button
         amd modifier mappings.
 
@@ -250,9 +297,11 @@ class Window(pyglet.window.Window):
             mouse button was clicked.
 
         """
+        if(tmp == 0):
+            self.Send({"action":"mouse","player":self.mainid,"type":button,"extras":modifiers})
         if self.exclusive:
             vector = self.get_sight_vector()
-            block, previous = self.model.hit_test(self.plyr.position, vector)
+            block, previous = self.model.hit_test(self.player_arr[self.mainid].position, vector)
             if (button == mouse.RIGHT) or \
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # ON OSX, control + left click = right click.
@@ -265,7 +314,7 @@ class Window(pyglet.window.Window):
         else:
             self.set_exclusive_mouse(True)
 
-    def on_mouse_motion(self, x, y, dx, dy):
+    def on_mouse_motion(self, x, y, dx, dy,tmp =0):
         """ Called when the player moves the mouse.
 
         Parameters
@@ -277,6 +326,8 @@ class Window(pyglet.window.Window):
             The movement of the mouse.
 
         """
+        if(tmp == 0):
+            self.Send({"action":"mouse_m","player":self.mainid,"type":{"x":x,"y":y},"extras":{"dx":dx,"dy":dy}})
         if self.exclusive:
             m = 0.15
             x, y = self.rotation
@@ -286,19 +337,19 @@ class Window(pyglet.window.Window):
 
     def checker(self, position):
        # print(position)
-       # print(self.plyr.flying)
+       # print(self.player_arr[self.mainid].flying)
         for  k, v in var_.FEATURES.iteritems():
         #    print(k," ",v)
             if k[0] -2 <position[0]< k[0] + 4 and k[1] -2 <position[1]< k[1] + 4 and k[2] -2 <position[2]< k[2] + 4 and v== "fly":
-                self.plyr.flying = True
+                self.player_arr[self.mainid].flying = True
 
-                thread=var_.RepeatEvery(self.model,self.plyr)
+                thread=var_.RepeatEvery(self.model,self.player_arr[self.mainid])
                 thread.start()
                 del var_.FEATURES[k]
                 self.model.remove_block(k)
                 break
 
-    def on_key_press(self, symbol, modifiers):
+    def on_key_press(self, symbol, modifiers,tmp=0):
         """ Called when the player presses a key. See pyglet docs for key
         mappings.
 
@@ -310,27 +361,29 @@ class Window(pyglet.window.Window):
             Number representing any modifying keys that were pressed.
 
         """
+        if(tmp == 0):
+            self.Send({"action":"key","player":self.mainid,"type":symbol,"extras":modifiers})
         if symbol == key.W:
-            self.plyr.strafe[0] -= 1
+            self.player_arr[self.mainid].strafe[0] -= 1
         elif symbol == key.S:
-            self.plyr.strafe[0] += 1
+            self.player_arr[self.mainid].strafe[0] += 1
         elif symbol == key.A:
-            self.plyr.strafe[1] -= 1
+            self.player_arr[self.mainid].strafe[1] -= 1
         elif symbol == key.D:
-            self.plyr.strafe[1] += 1
+            self.player_arr[self.mainid].strafe[1] += 1
         elif symbol == key.SPACE:
             if self.dy == 0:
                 self.dy = var_.JUMP_SPEED
         elif symbol == key.ESCAPE:
             self.set_exclusive_mouse(not self.exclusive)
         elif symbol == key.TAB:
-            self.plyr.flying = not self.plyr.flying
+            self.player_arr[self.mainid].flying = not self.player_arr[self.mainid].flying
         elif symbol in self.num_keys:
             index = (symbol - self.num_keys[0]) % len(self.inventory)
             self.block = self.inventory[index]
         #self.checker()
 
-    def on_key_release(self, symbol, modifiers):
+    def on_key_release(self, symbol, modifiers,tmp = 0):
         """ Called when the player releases a key. See pyglet docs for key
         mappings.
 
@@ -342,14 +395,16 @@ class Window(pyglet.window.Window):
             Number representing any modifying keys that were pressed.
 
         """
+        if(tmp == 0):
+            self.Send({"action":"keyR","player":self.mainid,"type":symbol,"extras":modifiers})
         if symbol == key.W:
-            self.plyr.strafe[0] += 1
+            self.player_arr[self.mainid].strafe[0] += 1
         elif symbol == key.S:
-            self.plyr.strafe[0] -= 1
+            self.player_arr[self.mainid].strafe[0] -= 1
         elif symbol == key.A:
-            self.plyr.strafe[1] += 1
+            self.player_arr[self.mainid].strafe[1] += 1
         elif symbol == key.D:
-            self.plyr.strafe[1] -= 1
+            self.player_arr[self.mainid].strafe[1] -= 1
 
     def on_resize(self, width, height):
         """ Called when the window is resized to a new `width` and `height`.
@@ -394,7 +449,9 @@ class Window(pyglet.window.Window):
         x, y = self.rotation
         glRotatef(x, 0, 1, 0)
         glRotatef(-y, math.cos(math.radians(x)), 0, math.sin(math.radians(x)))
-        x, y, z = self.plyr.position
+      #  print self.mainid
+       # print self.player_arr
+        x, y, z = self.player_arr[self.mainid].position
         glTranslatef(-x, -y, -z)
 
     def on_draw(self):
@@ -416,7 +473,7 @@ class Window(pyglet.window.Window):
 
         """
         vector = self.get_sight_vector()
-        block = self.model.hit_test(self.plyr.position, vector)[0]
+        block = self.model.hit_test(self.player_arr[self.mainid].position, vector)[0]
         if block:
             x, y, z = block
             vertex_data = var_.cube_vertices(x, y, z, 0.51)
@@ -429,7 +486,7 @@ class Window(pyglet.window.Window):
         """ Draw the label in the top left of the screen.
 
         """
-        x, y, z = self.plyr.position
+        x, y, z = self.player_arr[self.mainid].position
         
         self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d' % (
             pyglet.clock.get_fps(), x, y, z,

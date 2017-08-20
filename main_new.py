@@ -1,5 +1,4 @@
 from __future__ import division
-
 import window as win_
 from pyglet.gl import *
 def setup_fog():
@@ -42,6 +41,7 @@ def main():
     window.set_exclusive_mouse(True)
     setup()
     pyglet.app.run()
+
 
 
 if __name__ == '__main__':
