@@ -39,7 +39,7 @@ def setup():
 def main():
     window = win_.Window(width=800, height=600, caption='Pyglet', resizable=True)
     # Hide the mouse cursor and prevent the mouse from leaving the window.
-    window.set_exclusive_mouse(True)
+    window.set_exclusive_mouse(False)
     setup()
     pyglet.app.run()
 
