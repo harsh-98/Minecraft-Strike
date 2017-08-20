@@ -20,7 +20,7 @@ class Model(object):
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
         self.group1 = TextureGroup(image.load("images.jpg").get_texture())
-        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
+        self.group2 = TextureGroup(image.load("player.png").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}

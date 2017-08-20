@@ -25,6 +25,8 @@ class ClientChannel(Channel):
     def Network_rem(self, data):
        # print "remove"
         self._server.key_handle3(data, "remove")
+    def Network_coor(self,data):
+        self._server.key_handle3(data, "visible")
 
 from PodSixNet.Server import Server
 
@@ -86,7 +88,7 @@ class MyServer(Server):
     def check(self):
             t=random.randint(-4,4)
             if t in self.coor :
-                return check()
+                return self.check(self)
             return t
 
     def key_handle(self, data,action):

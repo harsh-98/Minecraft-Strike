@@ -48,10 +48,10 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         # A list of blocks the player can place. Hit num keys to cycle.
         self.inventory = [var_.BRICK, var_.GRASS, var_.SAND]
-
         # The current block the user can place. Hit num keys to cycle.
         self.block = self.inventory[0]
-
+        #position for the player stored
+        self.position_dict={}
         # Convenience list of num keys.
         self.num_keys = [
             key._1, key._2, key._3, key._4, key._5,
@@ -85,6 +85,7 @@ class Window(pyglet.window.Window, ConnectionListener):
         for i in data["player_arr"]:
             self.player_arr.append(plyr_.Player(i,data["coor"]))
         self.mainid=data["player"]
+        self.position_dict[data["player"]] = data["coor"]
         self.running = True
         print self.mainid
         print self.player_arr
@@ -106,7 +107,11 @@ class Window(pyglet.window.Window, ConnectionListener):
         self.model.add_block(data["position"],data["texture"])
     def Network_remove(self, data):
         self.model.remove_block(data["position"])
-
+    def Network_visible(self, data):
+       # self.player_arr[data["player"]].position = data["position"]
+      #  print data["position"][0],data["position"][1],data["position"][2],data["player"]
+        self.position_dict[data["player"]] = (float(data["position"][0]),data["position"][1]-.25,float(data["position"][2]))
+        self.position_render(data["position"][0],data["position"][1],data["position"][2],data["player"])
 
 
 
@@ -225,20 +230,30 @@ class Window(pyglet.window.Window, ConnectionListener):
         # collisions
         x, y, z = self.player_arr[self.mainid].position
         x, y, z = self.collide((x + dx, y + dy, z + dz), var_.PLAYER_HEIGHT)
-        self.checker((x,y,z))
-        vertex_data = var_.cube_vertices(x+4, y+4, z+4, 0.5)
+
+      #  vertex_data = var_.cube_vertices(x+4, y+4, z+4, 0.5)
         self.player_arr[self.mainid].position = (x, y, z)
-        self.model.world[self.player_arr[self.mainid].previous] = var_.arr
-        if self.player_arr[self.mainid].previous != None :
-            pass
+        #print self.position_dict[self.mainid],self.player_arr[self.mainid].position
+
+        if self.position_dict[self.mainid] != self.player_arr[self.mainid].position:
+            self.checker((x,y,z))
+            self.position_render(x+4, y+4, z+4,self.mainid)
+            self.Send({"action":"coor","player":self.mainid,"position":(x+4, y+4, z+4)})
+            self.position_dict[self.mainid]=self.player_arr[self.mainid].position
+
+    def position_render(self,x,y,z,id_):
+
+        print(self.player_arr[id_].previous)
+        vertex_data = var_.cube_vertices(x, y, z, 0.5)
+        if self.player_arr[id_].previous != None :
+            self.player_arr[id_]._shown1.pop(self.player_arr[id_].previous).delete()
          #   print(self.player_arr[self.mainid].previous)
           #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
-            self.player_arr[self.mainid]._shown1.pop(self.player_arr[self.mainid].previous).delete()
-        self.player_arr[self.mainid]._shown1[(x+4, y+4, z+4)] = self.model.batch.add(24, GL_QUADS, self.model.group2,
+        self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group2,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
-        self.player_arr[self.mainid].previous = (x+4, y+4, z+4)
-      
+        self.player_arr[id_].previous = (x, y, z)
+
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`

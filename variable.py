@@ -98,7 +98,25 @@ def tex_coords(top, bottom, side):
     result.extend(side * 4)
     return result
 
-arr = tex_coords((1,1),(1,1),(1,1))
+def tex_coords2(top, bottom, side1,side2,side3,side4):
+    """ Return a list of the texture squares for the top, bottom and side.
+    """
+    top = tex_coord(*top)
+    bottom = tex_coord(*bottom)
+    side1 = tex_coord(*side1)
+    side2 = tex_coord(*side2)
+    side3 = tex_coord(*side3)
+    side4 = tex_coord(*side4)
+    result = []
+    result.extend(top)
+    result.extend(bottom)
+    result.extend(side1)
+    result.extend(side2)
+    result.extend(side3)
+    result.extend(side4)
+    return result
+
+arr = tex_coords2((0,0),(0,2),(0,1),(2,1),(0,1),(2,2))
 
 TEXTURE_PATH = 'texture.png'
 
