@@ -83,9 +83,9 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_init(self,data):
     #    print "asdfghjk"
         for i in data["player_arr"]:
-            self.player_arr.append(plyr_.Player(i))
+            self.player_arr.append(plyr_.Player(i,data["coor"]))
         self.mainid=data["player"]
-        self.running =True
+        self.running = True
         print self.mainid
         print self.player_arr
 
@@ -102,6 +102,10 @@ class Window(pyglet.window.Window, ConnectionListener):
         self.on_mouse_press(-1,-1,data['type'],data['extras'],1)
     def Network_mouse_r(self, data):
         self.on_mouse_motion(data['type']["x"],data['type']["y"],data['extras']["dx"],data['extras']["dy"],1)
+    def Network_add_b(self, data):
+        self.model.add_block(data["position"],data["texture"])
+    def Network_remove(self, data):
+        self.model.remove_block(data["position"])
 
 
 
@@ -222,17 +226,19 @@ class Window(pyglet.window.Window, ConnectionListener):
         x, y, z = self.player_arr[self.mainid].position
         x, y, z = self.collide((x + dx, y + dy, z + dz), var_.PLAYER_HEIGHT)
         self.checker((x,y,z))
-        vertex_data = var_.cube_vertices(x, y, z, 0.5)
+        vertex_data = var_.cube_vertices(x+4, y+4, z+4, 0.5)
         self.player_arr[self.mainid].position = (x, y, z)
         self.model.world[self.player_arr[self.mainid].previous] = var_.arr
         if self.player_arr[self.mainid].previous != None :
+            pass
          #   print(self.player_arr[self.mainid].previous)
           #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
             self.player_arr[self.mainid]._shown1.pop(self.player_arr[self.mainid].previous).delete()
-        self.player_arr[self.mainid]._shown1[self.player_arr[self.mainid].position] = self.model.batch.add(24, GL_QUADS, self.model.group2,
+        self.player_arr[self.mainid]._shown1[(x+4, y+4, z+4)] = self.model.batch.add(24, GL_QUADS, self.model.group2,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
-        self.player_arr[self.mainid].previous = (x, y, z)
+        self.player_arr[self.mainid].previous = (x+4, y+4, z+4)
+      
 
     def collide(self, position, height):
         """ Checks to see if the player at the given `position` and `height`
@@ -306,11 +312,11 @@ class Window(pyglet.window.Window, ConnectionListener):
                     ((button == mouse.LEFT) and (modifiers & key.MOD_CTRL)):
                 # ON OSX, control + left click = right click.
                 if previous:
-                    self.model.add_block(previous, self.block)
+                    self.model.add_block(previous, self.block,True,1,self)
             elif button == pyglet.window.mouse.LEFT and block:
                 texture = self.model.world[block]
                 if texture != var_.STONE:
-                    self.model.remove_block(block)
+                    self.model.remove_block(block,True,1,self)
         else:
             self.set_exclusive_mouse(True)
 
@@ -346,7 +352,8 @@ class Window(pyglet.window.Window, ConnectionListener):
                 thread=var_.RepeatEvery(self.model,self.player_arr[self.mainid])
                 thread.start()
                 del var_.FEATURES[k]
-                self.model.remove_block(k)
+                print self
+                self.model.remove_block(k,True,1,self)
                 break
 
     def on_key_press(self, symbol, modifiers,tmp=0):

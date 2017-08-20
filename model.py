@@ -43,8 +43,9 @@ class Model(object):
         self._initialize()
 
     def features(self):
-        self.add_block((2, -1, 2), var_.COIN, immediate=False)
-        var_.FEATURES[(2, -1, 2)] = "fly"
+        pass
+#        self.add_block((2, -1, 2), var_.COIN, immediate=False)
+#        var_.FEATURES[(2, -1, 2)] = "fly"
 #        self.add_block((2, 20, 3), var_.COIN, immediate=False)
 #        var_.FEATURES[(2, 20, 3)] = "fly"
 #        self.add_block((24, -1, 4), var_.COIN, immediate=False)
@@ -122,7 +123,7 @@ class Model(object):
                 return True
         return False
 
-    def add_block(self, position, texture, immediate=True):
+    def add_block(self, position, texture, immediate=True,tmp=0,object_=None):
         """ Add a block with the given `texture` and `position` to the world.
 
         Parameters
@@ -136,6 +137,8 @@ class Model(object):
             Whether or not to draw the block immediately.
 
         """
+        if tmp != 0:
+            object_.Send({"action":"add","player":object_.mainid,"position":position,"texture":texture})
         if position in self.world:
             self.remove_block(position, immediate)
         self.world[position] = texture
@@ -145,7 +148,7 @@ class Model(object):
                 self.show_block(position)
             self.check_neighbors(position)
 
-    def remove_block(self, position, immediate=True):
+    def remove_block(self, position, immediate=True,tmp=0,object_=None):
         """ Remove the block at the given `position`.
 
         Parameters
@@ -157,6 +160,9 @@ class Model(object):
 
         """
        # print(position)
+        
+        if tmp != 0:
+            object_.Send({"action":"rem","player":object_.mainid,"position":position})
         del self.world[position]
         self.sectors[var_.sectorize(position)].remove(position)
         if immediate:

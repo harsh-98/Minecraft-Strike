@@ -1,6 +1,6 @@
 import pyglet 
 class Player:
-    def __init__(self,plyr_id):
+    def __init__(self,plyr_id,coor=(0,0,0)):
         # When flying var_.GRAVITY has no effect and speed is increased.
         self.flying = False
         self.power_time=0
@@ -17,7 +17,7 @@ class Player:
         self._shown1 = {}
         # Current (x, y, z) position in the world, specified with floats. Note
         # that, perhaps unlike in math class, the y-axis is the vertical axis.
-        self.position = (0, 0, 0)
+        self.position = coor
 
 
         self.WALKING_SPEED = 5

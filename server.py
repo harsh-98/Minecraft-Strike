@@ -1,24 +1,30 @@
 from PodSixNet.Channel import Channel
 import time
+import random
 class ClientChannel(Channel):
 
     def Network(self, data):
-        print data
-    
-    def Network_myaction(self, data):
-        print "myaction:", data
-    def Network_key(self, data):
-        print "ker_p"
-        self._server.key_handle(data,"keyPress")
-    def Network_keyR(self, data):
-        print "ker_r"
-        self._server.key_handle(data,"keyPR")
-    def Network_mouse(self, data):
-        print "mouse"
-        self._server.key_handle(data,"mouse_")
-    def Network_mouse_m(self, data):
-        print "mouse"
-        self._server.key_handle(data,"mouse_r")
+        pass
+      #  print data
+
+#    def Network_key(self, data):
+#        print "ker_p"
+#        self._server.key_handle(data,"keyPress")
+#    def Network_keyR(self, data):
+#        print "ker_r"
+#        self._server.key_handle(data,"keyPR")
+#    def Network_mouse(self, data):
+#        print "mouse"
+#        self._server.key_handle(data,"mouse_")
+#    def Network_mouse_m(self, data):
+#        print "mouse"
+#        self._server.key_handle(data,"mouse_r")
+    def Network_add(self, data):
+       # print "add"
+        self._server.key_handle2(data, "add_b")
+    def Network_rem(self, data):
+       # print "remove"
+        self._server.key_handle3(data, "remove")
 
 from PodSixNet.Server import Server
 
@@ -37,6 +43,7 @@ class MyServer(Server):
         self.queue = None
         self.gameIndex = 0
         self.plyr_id=0
+        self.coor = []
         #Set the velocity of our player
       #  self.velocity = 5
 
@@ -44,9 +51,11 @@ class MyServer(Server):
     def Connected(self, channel, addr):
         self.player_arr.append(self.plyr_id)
         print("New connection: {}".format(channel))
-        channel.Send({"action":"init","player":self.plyr_id,"player_arr":self.player_arr})
+        t=self.check()
+        self.coor.append(t)
+        channel.Send({"action":"init","player":self.plyr_id,"player_arr":self.player_arr,"coor":(t,2,t)})
         self.plyr_id+=1
-        print "init sent"
+        print (t,2,t)
         #When we receive a new connection
         #Check whether there is a game waiting in the queue
         if self.queue == None:
@@ -72,19 +81,31 @@ class MyServer(Server):
 
             #Empty the queue ready for the next connection
             #Increment the game index for the next game
-            
 
+
+    def check(self):
+            t=random.randint(-4,4)
+            if t in self.coor :
+                return check()
+            return t
 
     def key_handle(self, data,action):
 #        g = self.games[data["gameID"]]#
-#
-
 #        for i in range(len(g.player_channels)):
 #                g.player_channels[i].Send({"action":"keyPress","player":data["player"],"type":data["type"],"extras":data["extras"]})
         for i in range(len(self.queue.player_channels)):
             if not i == data["player"]:
                 self.queue.player_channels[i].Send({"action":action,"player":data["player"],"type":data["type"],"extras":data["extras"]})
 
+    def key_handle2(self, data,action):
+        for i in range(len(self.queue.player_channels)):
+            if not i == data["player"]:
+                self.queue.player_channels[i].Send({"action":action,"player":data["player"],"position":data["position"],"texture":data["texture"]})
+
+    def key_handle3(self, data,action):
+        for i in range(len(self.queue.player_channels)):
+            if not i == data["player"]:
+                self.queue.player_channels[i].Send({"action":action,"player":data["player"],"position":data["position"]})
 
 
 
