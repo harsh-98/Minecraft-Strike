@@ -106,7 +106,7 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_add_b(self, data):
         self.model.add_block(data["position"],data["texture"])
     def Network_remove(self, data):
-        self.model.remove_block(data["position"])
+        self.model.remove_block(data["position"],True,0,self)
     def Network_visible(self, data):
        # self.player_arr[data["player"]].position = data["position"]
       #  print data["position"][0],data["position"][1],data["position"][2],data["player"]
@@ -243,15 +243,19 @@ class Window(pyglet.window.Window, ConnectionListener):
 
     def position_render(self,x,y,z,id_):
 
-        print(self.player_arr[id_].previous)
+      #  print(self.player_arr[id_].previous)
         vertex_data = var_.cube_vertices(x, y, z, 0.5)
         if self.player_arr[id_].previous != None :
             self.player_arr[id_]._shown1.pop(self.player_arr[id_].previous).delete()
+            del self.model.world[var_.normalize(self.player_arr[id_].previous)]
+            del self.model.tmp[var_.normalize(self.player_arr[id_].previous)]
          #   print(self.player_arr[self.mainid].previous)
           #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
+        self.model.world[var_.normalize((x,y,z))] = var_.arr
         self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group2,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
+        self.model.tmp[var_.normalize((x,y,z))] = [(x, y, z),id_]
         self.player_arr[id_].previous = (x, y, z)
 
 
@@ -496,6 +500,8 @@ class Window(pyglet.window.Window, ConnectionListener):
         """
         vector = self.get_sight_vector()
         block = self.model.hit_test(self.player_arr[self.mainid].position, vector)[0]
+        if block in self.model.tmp:
+            block=self.model.tmp[block][0]
         if block:
             x, y, z = block
             vertex_data = var_.cube_vertices(x, y, z, 0.51)

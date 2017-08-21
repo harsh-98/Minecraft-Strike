@@ -20,7 +20,7 @@ class Model(object):
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
         self.group1 = TextureGroup(image.load("images.jpg").get_texture())
-        self.group2 = TextureGroup(image.load("player.png").get_texture())
+        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -33,7 +33,8 @@ class Model(object):
 
         # Mapping from sector to a list of positions inside that sector.
         self.sectors = {}
-
+        # maps the mormalized position to the real position
+        self.tmp = {}
         # Simple function queue implementation. The queue is populated with
         # _show_block() and _hide_block() calls
         self.queue = deque()
@@ -160,15 +161,23 @@ class Model(object):
 
         """
        # print(position)
-        
+        data = None
+        if position in self.tmp:
+            c=position
+            data = self.tmp[position]
+            object_.player_arr[data[1]]._shown1.pop(data[0]).delete()
+            del self.world[c]
+            del self.tmp[c]
+        else:
+            del self.world[position]
+            self.sectors[var_.sectorize(position)].remove(position)
+            if immediate:
+                if position in self.shown:
+                    self.hide_block(position)
+                self.check_neighbors(position)
         if tmp != 0:
-            object_.Send({"action":"rem","player":object_.mainid,"position":position})
-        del self.world[position]
-        self.sectors[var_.sectorize(position)].remove(position)
-        if immediate:
-            if position in self.shown:
-                self.hide_block(position)
-            self.check_neighbors(position)
+            print {"action":"rem","player":object_.mainid,"position":position,"killed_id":data[1]}
+            object_.Send({"action":"rem","player":object_.mainid,"position":position,"killed_id":data[1]})
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual
