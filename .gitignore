@@ -1,2 +1,9 @@
 *.pyc
 controller.py
+a
+build/
+dist/
+main_new.spec
+player1.png
+player_tmp.png
+tmp.png

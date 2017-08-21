@@ -20,7 +20,8 @@ class Model(object):
         # A TextureGroup manages an OpenGL texture.
         self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
         self.group1 = TextureGroup(image.load("images.jpg").get_texture())
-        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
+        #images for player
+        self.group2 = TextureGroup(image.load("player.png").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -161,13 +162,14 @@ class Model(object):
 
         """
        # print(position)
-        data = None
+        data = -1
         if position in self.tmp:
             c=position
             data = self.tmp[position]
             object_.player_arr[data[1]]._shown1.pop(data[0]).delete()
             del self.world[c]
             del self.tmp[c]
+            data=data[1]
         else:
             del self.world[position]
             self.sectors[var_.sectorize(position)].remove(position)
@@ -176,8 +178,8 @@ class Model(object):
                     self.hide_block(position)
                 self.check_neighbors(position)
         if tmp != 0:
-            print {"action":"rem","player":object_.mainid,"position":position,"killed_id":data[1]}
-            object_.Send({"action":"rem","player":object_.mainid,"position":position,"killed_id":data[1]})
+            print {"action":"rem","player":object_.mainid,"position":position,"texture":data}
+            object_.Send({"action":"rem","player":object_.mainid,"position":position,"texture":data})
 
     def check_neighbors(self, position):
         """ Check all blocks surrounding `position` and ensure their visual

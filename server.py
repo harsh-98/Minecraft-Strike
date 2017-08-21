@@ -1,6 +1,8 @@
 from PodSixNet.Channel import Channel
 import time
 import random
+player_arr=[]
+player_name={}
 class ClientChannel(Channel):
 
     def Network(self, data):
@@ -24,11 +26,24 @@ class ClientChannel(Channel):
         self._server.key_handle2(data, "add_b")
     def Network_rem(self, data):
        # print "remove"
-        self._server.key_handle3(data, "remove")
+        if  data["texture"] != -1:
+            player_arr.remove(data["texture"])
+            data["texture"]=[data["texture"],player_name[data["player"]]]
+        self._server.key_handle2(data, "remove")
     def Network_coor(self,data):
         self._server.key_handle3(data, "visible")
+    def Network_username(self, data):
+        print data
+        player_name[data["player"]] = data["position"]
+        self._server.key_handle3(data, "user")
+
 
 from PodSixNet.Server import Server
+def check(arr_):
+        t=random.randint(-4,4)
+        if t in arr_ :
+            return check(arr_)
+        return t
 
 class MyServer(Server):
     
@@ -41,7 +56,7 @@ class MyServer(Server):
 
         #Create the objects to hold our game ID and list of running games
         self.games = []
-        self.player_arr=[]
+        player_arr=[]
         self.queue = None
         self.gameIndex = 0
         self.plyr_id=0
@@ -51,11 +66,15 @@ class MyServer(Server):
 
     #Function to deal with new connections
     def Connected(self, channel, addr):
-        self.player_arr.append(self.plyr_id)
+      #  print player_arr
+        player_arr.append(self.plyr_id)
+
         print("New connection: {}".format(channel))
-        t=self.check()
+        t=check(player_arr)
         self.coor.append(t)
-        channel.Send({"action":"init","player":self.plyr_id,"player_arr":self.player_arr,"coor":(t,2,t)})
+        player_name[self.plyr_id] = None
+        print player_name
+        channel.Send({"action":"init","player":self.plyr_id,"player_arr":player_arr,"coor":(t,2,t),"name_dict":player_name})
         self.plyr_id+=1
         print (t,2,t)
         #When we receive a new connection
@@ -73,7 +92,7 @@ class MyServer(Server):
             channel.gameID = self.gameIndex
             #Set the second player channel
             self.queue.player_channels.append(channel)
-        print self.player_arr
+        print player_arr
         for i in range(0, len(self.queue.player_channels)-1):
             self.queue.player_channels[i].Send({"action":"add","player":self.plyr_id})
              #   self.queue.player_channels[i].Send({"action":"add","player":self.plyr_id,"gameID":self.queue.gameID})
@@ -85,11 +104,7 @@ class MyServer(Server):
             #Increment the game index for the next game
 
 
-    def check(self):
-            t=random.randint(-4,4)
-            if t in self.coor :
-                return self.check(self)
-            return t
+
 
     def key_handle(self, data,action):
 #        g = self.games[data["gameID"]]#

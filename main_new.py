@@ -1,6 +1,12 @@
 from __future__ import division
 import window as win_
 from pyglet.gl import *
+import username
+import result
+class tmp:
+    def __init_(self):
+        self.value = None
+
 def setup_fog():
     """ Configure the OpenGL fog properties.
 
@@ -36,11 +42,19 @@ def setup():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     setup_fog()
 def main():
-    window = win_.Window(width=800, height=600, caption='Pyglet', resizable=True)
+    storage = tmp()
+    a = username.ip_port(storage)
+    value = storage.value
+    print value
+    window = win_.Window(value[0],value[1],width=800, height=600, caption='Pyglet', resizable=True)
+    window.add_input(value[2])
     # Hide the mouse cursor and prevent the mouse from leaving the window.
     window.set_exclusive_mouse(True)
     setup()
     pyglet.app.run()
+    print "done"
+    print window.killed_by
+    result.result("You were killed by " + window.killer + " !!!")
 
 
 

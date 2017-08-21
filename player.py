@@ -1,6 +1,6 @@
 import pyglet 
 class Player:
-    def __init__(self,plyr_id,coor=(0,0,0)):
+    def __init__(self,plyr_id,coor=(0,0,0), name= None):
         # When flying var_.GRAVITY has no effect and speed is increased.
         self.flying = False
         self.power_time=0
@@ -36,6 +36,7 @@ class Player:
         self.TERMINAL_VELOCITY = 50
         self.pos_dev = {}
         self.previous = None
+        self.name= name
 #      self.t()
 #    def t(self):
 #        image = pyglet.image.load("images.jpg")

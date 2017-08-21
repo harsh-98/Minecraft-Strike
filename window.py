@@ -11,14 +11,16 @@ from pyglet.window import key, mouse
 import  model as mod_
 import player as plyr_
 from PodSixNet.Connection import ConnectionListener, connection
+import pyglet.app as app_
 class Window(pyglet.window.Window, ConnectionListener):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,ip = None,port = None, *args, **kwargs):
+        print kwargs
         super(Window, self).__init__(*args, **kwargs)
 
 #######################################
         self.Connect()
-        self.player_arr=[]
+        self.player_arr={}
         self.mainid=-1
 #######################################
 
@@ -45,7 +47,7 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         # Velocity in the y (upward) direction.
         self.dy = 0
-
+        self.pointer=0
         # A list of blocks the player can place. Hit num keys to cycle.
         self.inventory = [var_.BRICK, var_.GRASS, var_.SAND]
         # The current block the user can place. Hit num keys to cycle.
@@ -83,7 +85,8 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_init(self,data):
     #    print "asdfghjk"
         for i in data["player_arr"]:
-            self.player_arr.append(plyr_.Player(i,data["coor"]))
+            self.player_arr[i] = plyr_.Player(i,data["coor"],data["name_dict"][i])
+            self.pointer=i
         self.mainid=data["player"]
         self.position_dict[data["player"]] = data["coor"]
         self.running = True
@@ -92,7 +95,8 @@ class Window(pyglet.window.Window, ConnectionListener):
 
     def Network_add(self, data):
       #  self.hand = han_.Handler(data['gameID'], data['player'])
-        self.player_arr.append(plyr_.Player(data["player"]))
+        self.pointer+=1
+        self.player_arr[self.pointer] = plyr_.Player(data["player"])
        # self.hand.add_player(data['player'])
 
     def Network_keyPress(self, data):
@@ -106,13 +110,25 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_add_b(self, data):
         self.model.add_block(data["position"],data["texture"])
     def Network_remove(self, data):
+        if data["texture"] != -1:
+            if self.mainid == data["texture"][0]:
+              #  print data
+                pyglet.app.exit()
+                self.killer = data["texture"][1]
+                self.killed_by = data["player"]
         self.model.remove_block(data["position"],True,0,self)
+            #del self.player_arr[ data["killed_id"]]
     def Network_visible(self, data):
        # self.player_arr[data["player"]].position = data["position"]
       #  print data["position"][0],data["position"][1],data["position"][2],data["player"]
         self.position_dict[data["player"]] = (float(data["position"][0]),data["position"][1]-.25,float(data["position"][2]))
         self.position_render(data["position"][0],data["position"][1],data["position"][2],data["player"])
 
+    def Network_user(self, data):
+        self.player_arr[data["player"]].name = data["position"]
+    def add_input(self,data):
+        self.player_arr[self.mainid].name = data
+        self.Send({"action":"username","player":self.mainid,"position":data})
 
 
     def set_exclusive_mouse(self, exclusive):
@@ -516,9 +532,9 @@ class Window(pyglet.window.Window, ConnectionListener):
         """
         x, y, z = self.player_arr[self.mainid].position
         
-        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d' % (
+        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d ,%s' % (
             pyglet.clock.get_fps(), x, y, z,
-            len(self.model._shown), len(self.model.world),self.model.power_time,self.block[2])                         
+            len(self.model._shown), len(self.model.world),self.model.power_time,self.block[2],self.player_arr[self.mainid].name)                         
         self.label.draw()
 
     def draw_reticle(self):

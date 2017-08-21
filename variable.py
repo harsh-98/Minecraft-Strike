@@ -116,7 +116,7 @@ def tex_coords2(top, bottom, side1,side2,side3,side4):
     result.extend(side4)
     return result
 
-arr = tex_coords2((0,0),(0,2),(0,1),(2,1),(0,1),(2,2))
+arr = tex_coords2((1,2),(1,0),(0,1),(1,1),(2,1),(3,1))
 
 TEXTURE_PATH = 'texture.png'
 
