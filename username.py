@@ -25,5 +25,5 @@ class ip_port:
         self.window.mainloop()
 
     def exit_(self):
-        self.tt.value =self.inputIp.get(), self.inputPort.get(), self.inputName.get()
+        self.tt.value =self.inputIp.get(), int(self.inputPort.get()), self.inputName.get()
         self.window.destroy()

@@ -10,16 +10,17 @@ from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 import  model as mod_
 import player as plyr_
-from PodSixNet.Connection import ConnectionListener, connection
+from PodSixNet.Connection import ConnectionListener#, connection
 import pyglet.app as app_
 class Window(pyglet.window.Window, ConnectionListener):
 
-    def __init__(self,ip = None,port = None, *args, **kwargs):
+    def __init__(self,ip = "127.0.0.1",port = 31425, *args, **kwargs):
         print kwargs
+        print (ip,port)
         super(Window, self).__init__(*args, **kwargs)
 
 #######################################
-        self.Connect()
+        self.Connect((ip, port))
         self.player_arr={}
         self.mainid=-1
 #######################################
@@ -71,7 +72,7 @@ class Window(pyglet.window.Window, ConnectionListener):
             color=(0, 0, 0, 255))
         while not self.running:
             print self.running
-            connection.Pump()
+            self.connection.Pump()
             self.Pump()
         # This call schedules the `update()` method to be called
         # var_.TICKS_PER_SEC. This is the main game event loop.
@@ -80,7 +81,7 @@ class Window(pyglet.window.Window, ConnectionListener):
 
 
     def i(self):
-        connection.Pump()
+        self.connection.Pump()
         self.Pump()
     def Network_init(self,data):
     #    print "asdfghjk"
@@ -253,8 +254,8 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         if self.position_dict[self.mainid] != self.player_arr[self.mainid].position:
             self.checker((x,y,z))
-            self.position_render(x+4, y+4, z+4,self.mainid)
-            self.Send({"action":"coor","player":self.mainid,"position":(x+4, y+4, z+4)})
+            self.position_render(x, y, z,self.mainid)
+            self.Send({"action":"coor","player":self.mainid,"position":(x, y, z)})
             self.position_dict[self.mainid]=self.player_arr[self.mainid].position
 
     def position_render(self,x,y,z,id_):

@@ -40,7 +40,7 @@ class ClientChannel(Channel):
 
 from PodSixNet.Server import Server
 def check(arr_):
-        t=random.randint(-4,4)
+        t=random.randint(-10,10)
         if t in arr_ :
             return check(arr_)
         return t
@@ -50,9 +50,12 @@ class MyServer(Server):
     channelClass = ClientChannel
     
     def __init__(self, *args, **kwargs):
-
         #Call the super constructor
-        Server.__init__(self, *args, **kwargs)
+        ip,port = "127.0.0.1", 31425
+        if 1 == input("yes = 1 or no = 0"):
+            ip=raw_input("ip")
+            port=input("port")
+        Server.__init__(self,None,(ip, port),*args, **kwargs)
 
         #Create the objects to hold our game ID and list of running games
         self.games = []

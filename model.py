@@ -21,7 +21,7 @@ class Model(object):
         self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
         self.group1 = TextureGroup(image.load("images.jpg").get_texture())
         #images for player
-        self.group2 = TextureGroup(image.load("player.png").get_texture())
+        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -87,7 +87,7 @@ class Model(object):
         for d,e in zip(arr_.arr_h2, arr_.arr_h2t):
                 self.add_block(d,t[e+1], immediate=False)
 
-    def hit_test(self, position, vector, max_distance=8):
+    def hit_test(self, position, vector, max_distance=20):
         """ Line of sight search from current position. If a block is
         intersected it is returned, along with the block previously in the line
         of sight. If no block is found, return None, None.
