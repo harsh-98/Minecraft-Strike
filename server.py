@@ -79,7 +79,7 @@ class MyServer(Server):
         print player_name
         channel.Send({"action":"init","player":self.plyr_id,"player_arr":player_arr,"coor":(t,2,t),"name_dict":player_name})
         self.plyr_id+=1
-        print (t,2,t)
+        print (t,15,t)
         #When we receive a new connection
         #Check whether there is a game waiting in the queue
         if self.queue == None:

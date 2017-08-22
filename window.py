@@ -117,7 +117,8 @@ class Window(pyglet.window.Window, ConnectionListener):
                 pyglet.app.exit()
                 self.killer = data["texture"][1]
                 self.killed_by = data["player"]
-        self.model.remove_block(data["position"],True,0,self)
+        else :
+            self.model.remove_block(data["position"],True,0,self)
             #del self.player_arr[ data["killed_id"]]
     def Network_visible(self, data):
        # self.player_arr[data["player"]].position = data["position"]
@@ -254,7 +255,7 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         if self.position_dict[self.mainid] != self.player_arr[self.mainid].position:
             self.checker((x,y,z))
-            self.position_render(x, y, z,self.mainid)
+          #  self.position_render(x, y, z,self.mainid)
             self.Send({"action":"coor","player":self.mainid,"position":(x, y, z)})
             self.position_dict[self.mainid]=self.player_arr[self.mainid].position
 
