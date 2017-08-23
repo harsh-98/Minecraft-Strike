@@ -6,7 +6,7 @@ class ip_port:
         self.window =Tkinter.Tk()
         self.window.title("Minecraft-CS")
         self.window.geometry("400x400")      
-
+        self.name=0
         self.labelIp = Tkinter.Label(self.window, text = "IP_ADDR")
         self.inputIp = Tkinter.Entry(self.window)
         self.labelPort = Tkinter.Label(self.window, text = "PORT")
@@ -26,4 +26,6 @@ class ip_port:
 
     def exit_(self):
         self.tt.value =self.inputIp.get(), int(self.inputPort.get()), self.inputName.get()
+        if int(self.inputPort.get()) == 0:
+            self.tt.value = ("127.0.0.1",31425,self.name)
         self.window.destroy()

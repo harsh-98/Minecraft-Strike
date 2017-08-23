@@ -166,9 +166,11 @@ class Model(object):
         if position in self.tmp:
             c=position
             data = self.tmp[position]
-            object_.player_arr[data[1]]._shown1.pop(data[0]).delete()
-            del self.world[c]
-            del self.tmp[c]
+            object_.player_arr[data[1]].health-=1
+            if object_.player_arr[data[1]].health == 0:
+                object_.player_arr[data[1]]._shown1.pop(data[0]).delete()
+                del self.world[c]
+                del self.tmp[c]
             data=data[1]
         else:
             del self.world[position]

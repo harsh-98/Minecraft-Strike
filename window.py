@@ -40,6 +40,8 @@ class Window(pyglet.window.Window, ConnectionListener):
         # 90 (looking straight up). The horizontal rotation range is unbounded.
         self.rotation = (0, 0)
 
+        # health of the player
+        self.health = 6
         # Which sector the player is currently in.
         self.sector = None
 
@@ -71,13 +73,14 @@ class Window(pyglet.window.Window, ConnectionListener):
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
             color=(0, 0, 0, 255))
         while not self.running:
-            print self.running
+       #     print self.running
             self.connection.Pump()
             self.Pump()
         # This call schedules the `update()` method to be called
         # var_.TICKS_PER_SEC. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 1.0 / var_.TICKS_PER_SEC)
-
+        self.news = None
+        self.newh = None
 
 
     def i(self):
@@ -86,7 +89,7 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_init(self,data):
     #    print "asdfghjk"
         for i in data["player_arr"]:
-            self.player_arr[i] = plyr_.Player(i,data["coor"],data["name_dict"][i])
+            self.player_arr[i] = plyr_.Player(i,data["coor"],data["name_dict"][i][0])
             self.pointer=i
         self.mainid=data["player"]
         self.position_dict[data["player"]] = data["coor"]
@@ -111,14 +114,20 @@ class Window(pyglet.window.Window, ConnectionListener):
     def Network_add_b(self, data):
         self.model.add_block(data["position"],data["texture"])
     def Network_remove(self, data):
-        if data["texture"] != -1:
-            if self.mainid == data["texture"][0]:
-              #  print data
+#        print self.player_arr[data["texture"][0]].health
+        if self.mainid == data["texture"][0]:
+          #  print data
+            self.health-=1
+            if self.health == 0:
                 pyglet.app.exit()
                 self.killer = data["texture"][1]
                 self.killed_by = data["player"]
-        else :
+        if data["texture"][0]!=self.mainid :
             self.model.remove_block(data["position"],True,0,self)
+        if data["texture"][0] != -1 :
+            if self.player_arr[data["texture"][0]].health == 0:
+                print("harsh")
+                self.news = str(self.player_arr[data["texture"][0]].name)+" was killed by "+data["texture"][1]
             #del self.player_arr[ data["killed_id"]]
     def Network_visible(self, data):
        # self.player_arr[data["player"]].position = data["position"]
@@ -255,7 +264,7 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         if self.position_dict[self.mainid] != self.player_arr[self.mainid].position:
             self.checker((x,y,z))
-          #  self.position_render(x, y, z,self.mainid)
+        #    self.position_render(x, y, z,self.mainid)
             self.Send({"action":"coor","player":self.mainid,"position":(x, y, z)})
             self.position_dict[self.mainid]=self.player_arr[self.mainid].position
 
@@ -519,7 +528,12 @@ class Window(pyglet.window.Window, ConnectionListener):
         vector = self.get_sight_vector()
         block = self.model.hit_test(self.player_arr[self.mainid].position, vector)[0]
         if block in self.model.tmp:
-            block=self.model.tmp[block][0]
+            block=self.model.tmp[block]
+            t = self.player_arr[block[1]]
+            self.newh = str(t.name)+":"+str(t.health)
+            block=block[0]
+        else:
+            self.newh = None
         if block:
             x, y, z = block
             vertex_data = var_.cube_vertices(x, y, z, 0.51)
@@ -533,10 +547,13 @@ class Window(pyglet.window.Window, ConnectionListener):
 
         """
         x, y, z = self.player_arr[self.mainid].position
-        
-        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d ,%s' % (
-            pyglet.clock.get_fps(), x, y, z,
-            len(self.model._shown), len(self.model.world),self.model.power_time,self.block[2],self.player_arr[self.mainid].name)                         
+
+#        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d ,%s' % (
+#            pyglet.clock.get_fps(), x, y, z,
+#            len(self.model._shown), len(self.model.world),self.model.power_time,self.health,self.player_arr[self.mainid].name)
+        self.label.text = ' %s(%.2f, %.2f, %.2f) (Power: %d sec) [Health: %d] %s %s ' % (
+                self.player_arr[self.mainid].name,x, y, z,self.model.power_time,self.health,self.news, self.newh)
+
         self.label.draw()
 
     def draw_reticle(self):

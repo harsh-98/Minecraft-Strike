@@ -13,7 +13,7 @@ class Player:
         # right, and 0 otherwise.
         self.strafe = [0, 0]
        # self.batch = batch
-
+        self.health = 6
         self._shown1 = {}
         # Current (x, y, z) position in the world, specified with floats. Note
         # that, perhaps unlike in math class, the y-axis is the vertical axis.

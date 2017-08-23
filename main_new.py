@@ -54,7 +54,7 @@ def main():
     pyglet.app.run()
     print "done"
     print window.killed_by
-    result.result("You were killed by " + window.killer + " !!!")
+    result.result("You were killed by " + str(window.killer) + " !!!")
 
 
 

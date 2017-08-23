@@ -27,14 +27,18 @@ class ClientChannel(Channel):
     def Network_rem(self, data):
        # print "remove"
         if  data["texture"] != -1:
-            player_arr.remove(data["texture"])
-            data["texture"]=[data["texture"],player_name[data["player"]]]
+            if player_name[data["player"]][1] == 0:
+                player_arr.remove(data["texture"])
+            data["texture"]=[data["texture"],player_name[data["player"]][0]]
+            player_name[data["player"]][1]-=1
+        else:
+            data["texture"]=[data["texture"]]
         self._server.key_handle2(data, "remove")
     def Network_coor(self,data):
         self._server.key_handle3(data, "visible")
     def Network_username(self, data):
         print data
-        player_name[data["player"]] = data["position"]
+        player_name[data["player"]] = [data["position"],6]
         self._server.key_handle3(data, "user")
 
 
@@ -75,9 +79,9 @@ class MyServer(Server):
         print("New connection: {}".format(channel))
         t=check(player_arr)
         self.coor.append(t)
-        player_name[self.plyr_id] = None
+        player_name[self.plyr_id] = [None]
         print player_name
-        channel.Send({"action":"init","player":self.plyr_id,"player_arr":player_arr,"coor":(t,2,t),"name_dict":player_name})
+        channel.Send({"action":"init","player":self.plyr_id,"player_arr":player_arr,"coor":(t,15,t),"name_dict":player_name})
         self.plyr_id+=1
         print (t,15,t)
         #When we receive a new connection
