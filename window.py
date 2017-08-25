@@ -281,7 +281,7 @@ class Window(pyglet.window.Window, ConnectionListener):
          #   print(self.player_arr[self.mainid].previous)
           #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
         self.model.world[var_.normalize((x,y,z))] = var_.arr
-        self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group1,
+        self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
         self.model.tmp[var_.normalize((x,y,z))] = [(x, y, z),id_]
