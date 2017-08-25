@@ -4,26 +4,26 @@
 
 This game is developed using python and [pyglet](https://bitbucket.org/pyglet/pyglet/wiki/Home) just like the original project by [fogleman](https://github.com/fogleman/).
 Now the game is multiplayer and new levels have been added.
-![]()
-![]()
+![Air view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/MC-Srtike.png)
+![Ground view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/MC-Strike2.png)
 
 For client-server scripting, I have used a self-modified version of [PodSixNet](https://github.com/chr15m/PodSixNet).
 
-##How to install
+## How to install
 
     git clone https://github.com/h4r5h-ja1n/Minecraft-Strike.git
     cd Minecraft-Strike
     pip install -r requirements.txt (__PodSixNet default code will not, since I am using a slightly modified version of it you can refer this [PR](https://github.com/chr15m/PodSixNet/pull/7)__)
 
 
-##How to run the Game
+## How to run the Game
 
     python server.py `#for starting the server`
     python main_new.py `#for starting the client, the default ip and port are 127.0.0.1 and 31425`
 
-##Just wanted to play the Game
+## Just wanted to play the Game
    
-###FOR LINUX
+### FOR LINUX
 
     git clone -b distro git@github.com:h4r5h-ja1n/Minecraft-Strike.git
     python server.py 
