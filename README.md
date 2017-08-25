@@ -11,9 +11,11 @@ For client-server scripting, I have used a self-modified version of [PodSixNet](
 
 ## How to install
 
-    git clone https://github.com/h4r5h-ja1n/Minecraft-Strike.git
-    cd Minecraft-Strike
-    pip install -r requirements.txt (__PodSixNet default code will not, since I am using a slightly modified version of it you can refer this [PR](https://github.com/chr15m/PodSixNet/pull/7)__)
+>git clone https://github.com/h4r5h-ja1n/Minecraft-Strike.git
+
+>cd Minecraft-Strike
+
+>pip install -r requirements.txt (__PodSixNet default code will not, since I am using a slightly modified version of it you can refer this [PR](https://github.com/chr15m/PodSixNet/pull/7)__)
 
 
 ## How to run the Game
