@@ -12,6 +12,7 @@ import  model as mod_
 import player as plyr_
 from PodSixNet.Connection import ConnectionListener#, connection
 import pyglet.app as app_
+#player health is defined in three files player,server,window
 class Window(pyglet.window.Window, ConnectionListener):
 
     def __init__(self,ip = "127.0.0.1",port = 31425, *args, **kwargs):
@@ -81,6 +82,7 @@ class Window(pyglet.window.Window, ConnectionListener):
         pyglet.clock.schedule_interval(self.update, 1.0 / var_.TICKS_PER_SEC)
         self.news = None
         self.newh = None
+        self.newp = None
 
 
     def i(self):
@@ -279,7 +281,7 @@ class Window(pyglet.window.Window, ConnectionListener):
          #   print(self.player_arr[self.mainid].previous)
           #  self.model.remove_block(self.player_arr[self.mainid].previous, True, 2)
         self.model.world[var_.normalize((x,y,z))] = var_.arr
-        self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group2,
+        self.player_arr[id_]._shown1[(x, y, z)] = self.model.batch.add(24, GL_QUADS, self.model.group1,
             ('v3f/static', vertex_data),
             ('t2f/static', var_.arr))
         self.model.tmp[var_.normalize((x,y,z))] = [(x, y, z),id_]
@@ -541,6 +543,7 @@ class Window(pyglet.window.Window, ConnectionListener):
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
             pyglet.graphics.draw(24, GL_QUADS, ('v3f/static', vertex_data))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+            self.newp = block
 
     def draw_label(self):
         """ Draw the label in the top left of the screen.
@@ -551,8 +554,8 @@ class Window(pyglet.window.Window, ConnectionListener):
 #        self.label.text = '%02d (%.2f, %.2f, %.2f) %d / %d   Power : %d sec  %d ,%s' % (
 #            pyglet.clock.get_fps(), x, y, z,
 #            len(self.model._shown), len(self.model.world),self.model.power_time,self.health,self.player_arr[self.mainid].name)
-        self.label.text = ' %s(%.2f, %.2f, %.2f) (Power: %d sec) [Health: %d] %s %s ' % (
-                self.player_arr[self.mainid].name,x, y, z,self.model.power_time,self.health,self.news, self.newh)
+        self.label.text = ' %s(%.2f, %.2f, %.2f) (Power: %d sec) [Health: %d] %s %s %s' % (
+                self.player_arr[self.mainid].name,x, y, z,self.model.power_time,self.health,self.news, self.newh, self.newp)
 
         self.label.draw()
 

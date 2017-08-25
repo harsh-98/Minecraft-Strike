@@ -75,7 +75,7 @@ def square_vertices(t,n):
     z=t[2]
     return [x,y,z, x+n,y,z, x+n,y+n,z, x,y+n,z] 
 
-def tex_coord(x, y, n=4):
+def tex_coord(x, y, n=16):
     """ Return the bounding vertices of the texture square.
 
     """
@@ -98,6 +98,8 @@ def tex_coords(top, bottom, side):
     result.extend(side * 4)
     return result
 
+
+
 def tex_coords2(top, bottom, side1,side2,side3,side4):
     """ Return a list of the texture squares for the top, bottom and side.
     """
@@ -116,21 +118,40 @@ def tex_coords2(top, bottom, side1,side2,side3,side4):
     result.extend(side4)
     return result
 
-arr = tex_coords2((1,2),(1,0),(0,1),(1,1),(2,1),(3,1))
+arr =  tex_coords2((6,9),(8,8), (6,8), (7,8),(6,8),(6,8))
+#arr = tex_coords2((1,2),(1,0),(0,1),(1,1),(2,1),(3,1))
 
 TEXTURE_PATH = 'texture.png'
 
-GRASS = tex_coords((1, 0), (0, 1), (0, 0))
+GRASS1 = tex_coords((1, 6), (2, 15), (3, 15))
+GRASS = tex_coords((1, 6), (2, 15), (3, 15))
+GRASS2 = tex_coords((2, 6), (2, 15), (3, 15))
+ROAD = tex_coords((0, 15), (0, 15), (3, 14))
+WALL1 = tex_coords((5, 15), (5, 15), (5, 15))
+WALL2 = tex_coords((0, 14), (0, 14), (0, 14))
+WALL3 = tex_coords((7, 15), (7, 15), (7, 15))
+WALL4 = tex_coords((0,3),(0,1),(0,2))
+FLOOR1 = tex_coords((7,14), (3,11), (2,0))
+FLOOR2 = tex_coords((6,14), (2,5), (2,0))
+FLOOR3 = tex_coords((8,14), (2,4), (2,0))
+FLOOR4 = tex_coords((14,12), (3,0), (3,11))
+STONE = tex_coords((9, 0), (9, 0), (9, 0))
+NOR = tex_coords((1,1),(1,1),(1,1))
+FLOW1 = tex_coords((5,11),(1,1),(15,10))
+FLOW2 = tex_coords((5,11),(1,1),(6,11))
+TOWER = tex_coords2((1,11),(9,14),(9,15),(10,15),(9,15),(10,15))
+TOWER2 = tex_coords2((1,12),(9,14),(3,13),(3,13),(3,13),(3,13))
+
+
+
 SAND = tex_coords((1, 1), (1, 1), (1, 1))
 BRICK = tex_coords((2, 0), (2, 0), (2, 0))
-STONE = tex_coords((2, 1), (2, 1), (2, 1))
 RSTONE = tex_coords((0,3), (0,3), (0,3))
 SNOW = tex_coords((3,3), (3,2), (3,2))
 MARBLE = tex_coords((3,1), (3,1), (3,1))
 ALGAE = tex_coords((2,3), (2,3), (2,3))
 COIN = tex_coords((3,0),(3,0),(3,0))
 CEMENT = tex_coords((1,2), (1,2), (1,2))
-
 
 FACES = [
     ( 0, 1, 0),

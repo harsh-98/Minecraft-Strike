@@ -10,6 +10,8 @@ from pyglet.window import key, mouse
 import variable as var_
 from collections import deque
 import arr as arr_
+#import tmp8 as t_
+from hardcode2 import structures as bui
 class Model(object):
 
     def __init__(self):
@@ -18,10 +20,8 @@ class Model(object):
         self.batch = pyglet.graphics.Batch()
 
         # A TextureGroup manages an OpenGL texture.
-        self.group = TextureGroup(image.load(var_.TEXTURE_PATH).get_texture())
-        self.group1 = TextureGroup(image.load("images.jpg").get_texture())
+        self.group = TextureGroup(image.load("PKYMK.png").get_texture())
         #images for player
-        self.group2 = TextureGroup(image.load("img1.jpg").get_texture())
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
         self.world = {}
@@ -54,7 +54,7 @@ class Model(object):
 #        var_.FEATURES[(24, -1, 4)] = "fly"
 #        self.add_block((23, -1, 2), var_.COIN, immediate=False)
 #        var_.FEATURES[(23, -1, 2)] = "fly"
-        self.tt((4,4,4))
+      #  self.tt((4,4,4))
     def tt(self, position):
         self._shown[position] = self.batch.add(4, GL_QUADS, self.group1,
             ('v3f/static', var_.square_vertices(position, 1)),
@@ -68,24 +68,70 @@ class Model(object):
         """
   #      self.add_block((0, 20 - 2, 0), var_.GRASS, immediate=False)
         self.features()
-        n = 160  # 1/2 width and height of world
+        n = 80  # 1/2 width and height of world
         s = 1  # step size
         y = 0  # initial y height
         for x in xrange(-n, n + 1, s):
             for z in xrange(-n, n + 1, s):
-                # create a layer var_.STONE an var_.GRASS everywhere.
-                self.add_block((x, y - 2, z), var_.GRASS, immediate=False)
+                # create a layer var_.STONE an var_.GRASS everywhere
+                t=[var_.GRASS1, var_.GRASS2]
+                V= random.randint(0, 1) 
+                if (-81<x<-50 or 50<x<81) and (-81<z<-50 or 50<z<81):
+                    self.add_block((x, y - 2, z), t[V], immediate=False)
+                else:
+                    self.add_block((x, y - 2, z), var_.NOR, immediate=False)
                 self.add_block((x, y - 3, z), var_.STONE, immediate=False)
+                if (-50<=x<=-40 or 40<=x<=50 or -25<x<-13 or 13<x<25) or(-50<=z<=-40 or 40<=z<=50 or -25<z<-13 or 13<z<25):
+                    self.add_block((x,-2,z),var_.ROAD,immediate=False)
+                if (not(-50<=x<=-40 or 40<=x<=50 or -25<x<-13 or 13<x<25) and (z==-48 or z==-42 or z==42 or z==48 or z==23 or z==15 or z==-23 or z==-15)) :
+                    self.add_block((x,-1,z),var_.FLOW1,immediate=False)
+                if ( not(-50<=z<=-40 or 40<=z<=50 or -25<z<-13 or 13<z<25)and (x==-48 or x==-42 or x==42 or x==48 or x==23 or x==15 or x==-23 or x==-15)):
+                    self.add_block((x,-1,z),var_.FLOW2,immediate=False)
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
                     for dy in   xrange(-2, 30):
                         self.add_block((x, y + dy, z), var_.STONE, immediate=False)
-        t=[var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE]
-        for d,e in zip(arr_.arr_h, arr_.arr_ht):
-                self.add_block(d,t[e+1], immediate=False)
-        t=[var_.GRASS, var_.SAND, var_.BRICK]
-        for d,e in zip(arr_.arr_h2, arr_.arr_h2t):
-                self.add_block(d,t[e+1], immediate=False)
+#        t=[var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE]
+#        for d,e in zip(arr_.arr_h, arr_.arr_ht):
+#                self.add_block(d,t[e+1], immediate=False)
+#        t=[var_.GRASS, var_.SAND, var_.BRICK]
+#        for d,e in zip(arr_.arr_h2, arr_.arr_h2t):
+#                self.add_block(d,t[e+1], immediate=False)
+#                
+#        for i,j in t_.arra.iteritems():
+#            self.add_block(i, var_.FLOOR1, immediate=False)
+        #contoller for the map
+        bui_ =bui(1)
+        assign=1
+        pointer=0
+        if assign==0:
+            arr=[]
+        else:
+            arr = [2, 2, 3, 3, 3, 2, 2, 3, 2, 3, 3, 3, 3, 3, 2, 3, 2, 2, 3, 3]
+        tmp = [-73,-59,-32,32,59,73]
+        for i in tmp:
+            for j in tmp:
+                if not ((abs(i)==73 or abs(i)==59 )and(abs(j)==73 or abs(j)==59 ) ):
+                    t=random.randint(2,3)
+                    if assign ==0:
+                        arr.append(t)
+                    else:
+                        t=arr[pointer]
+                        pointer+=1
+                    bui_.building(self,i,-1,j,t*6,6,6,t)
+        tmp = [-65,65]
+        for i in tmp:
+            bui_.building(self,0,-1,i,10,13,13)
+            bui_.building(self,i,-1,0,10,13,13)
+        tmp = [-32,32]
+        for i in tmp:
+            bui_.building(self,0,-1,i,5,7,12,1)
+            bui_.building(self,i,-1,0,5,12,7,1)
+        bui_.tower(self,0,-1,0,15,7,7,1)
+        print(arr)
+        print(bui_.arr)
+        print(bui_.arr1)
+
 
     def hit_test(self, position, vector, max_distance=20):
         """ Line of sight search from current position. If a block is
