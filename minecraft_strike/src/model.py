@@ -7,11 +7,11 @@ from pyglet import image
 from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
-import variable as var_
+import minecraft_strike.src.variable as var_
 from collections import deque
-import arr as arr_
+import minecraft_strike.src.arr as arr_
 #import tmp8 as t_
-from hardcode2 import structures as bui
+from minecraft_strike.src.hardcode2 import structures as bui
 class Model(object):
 
     def __init__(self):
@@ -20,7 +20,7 @@ class Model(object):
         self.batch = pyglet.graphics.Batch()
 
         # A TextureGroup manages an OpenGL texture.
-        self.group = TextureGroup(image.load("PKYMK.png").get_texture())
+        self.group = TextureGroup(image.load("assets/PKYMK.png").get_texture())
         #images for player
         # A mapping from position to the texture of the block at that position.
         # This defines all the blocks that are currently in the world.
@@ -75,7 +75,7 @@ class Model(object):
             for z in xrange(-n, n + 1, s):
                 # create a layer var_.STONE an var_.GRASS everywhere
                 t=[var_.GRASS1, var_.GRASS2]
-                V= random.randint(0, 1) 
+                V= random.randint(0, 1)
                 if (-81<x<-50 or 50<x<81) and (-81<z<-50 or 50<z<81):
                     self.add_block((x, y - 2, z), t[V], immediate=False)
                 else:
@@ -97,7 +97,7 @@ class Model(object):
 #        t=[var_.GRASS, var_.SAND, var_.BRICK]
 #        for d,e in zip(arr_.arr_h2, arr_.arr_h2t):
 #                self.add_block(d,t[e+1], immediate=False)
-#                
+#
 #        for i,j in t_.arra.iteritems():
 #            self.add_block(i, var_.FLOOR1, immediate=False)
         #contoller for the map
@@ -226,7 +226,7 @@ class Model(object):
                     self.hide_block(position)
                 self.check_neighbors(position)
         if tmp != 0:
-            print {"action":"rem","player":object_.mainid,"position":position,"texture":data}
+            print({"action":"rem","player":object_.mainid,"position":position,"texture":data})
             object_.Send({"action":"rem","player":object_.mainid,"position":position,"texture":data})
 
     def check_neighbors(self, position):

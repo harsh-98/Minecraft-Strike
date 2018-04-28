@@ -1,11 +1,15 @@
-import Tkinter
+import tkinter
 
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 3:
+    print("Sorry, minecraft_strike needs python >= 3.3", file=sys.stderr)
+    sys.exit(-1)
 
 class ip_port:
     def __init__(self,tt):
         self.window =Tkinter.Tk()
         self.window.title("Minecraft-CS")
-        self.window.geometry("400x400")      
+        self.window.geometry("400x400")
         self.name=0
         self.labelIp = Tkinter.Label(self.window, text = "IP_ADDR")
         self.inputIp = Tkinter.Entry(self.window)
@@ -13,7 +17,7 @@ class ip_port:
         self.inputPort = Tkinter.Entry(self.window)
         self.labelName = Tkinter.Label(self.window, text = "YOUR NAME")
         self.inputName = Tkinter.Entry(self.window)
-        self.button = Tkinter.Button(self.window, text = "GO" ,command = self.exit_)      
+        self.button = Tkinter.Button(self.window, text = "GO" ,command = self.exit_)
         self.tt = tt
         self.labelIp.pack()
         self.inputIp.pack()

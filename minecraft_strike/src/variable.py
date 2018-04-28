@@ -3,8 +3,6 @@ import math
 import random
 import time
 import threading
-import window as win_
-
 from collections import deque
 
 TICKS_PER_SEC = 60
@@ -36,7 +34,7 @@ FEATURES = dict()
 class RepeatEvery(threading.Thread):
     def __init__(self, object , window_object):
 
-        threading.Thread.__init__(self)     
+        threading.Thread.__init__(self)
         self.object =object  # seconds between calls
         self.window_object = window_object
         self.runable = True
@@ -46,7 +44,7 @@ class RepeatEvery(threading.Thread):
         self.object.power_time= 5
         while self.object.power_time > 0 and self.runable:
             time.sleep(1)
-                 
+
             self.object.power_time = self.object.power_time - 1
         self.window_object.flying=False
 
@@ -73,7 +71,7 @@ def square_vertices(t,n):
     x=t[0]
     y=t[1]
     z=t[2]
-    return [x,y,z, x+n,y,z, x+n,y+n,z, x,y+n,z] 
+    return [x,y,z, x+n,y,z, x+n,y+n,z, x,y+n,z]
 
 def tex_coord(x, y, n=16):
     """ Return the bounding vertices of the texture square.
@@ -121,7 +119,7 @@ def tex_coords2(top, bottom, side1,side2,side3,side4):
 arr =  tex_coords2((6,9),(8,8), (6,8), (7,8),(6,8),(6,8))
 #arr = tex_coords2((1,2),(1,0),(0,1),(1,1),(2,1),(3,1))
 
-TEXTURE_PATH = 'texture.png'
+TEXTURE_PATH = "assets/texture.png"
 
 GRASS1 = tex_coords((1, 6), (2, 15), (3, 15))
 GRASS = tex_coords((1, 6), (2, 15), (3, 15))

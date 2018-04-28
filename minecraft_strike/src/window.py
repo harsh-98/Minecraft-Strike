@@ -3,21 +3,21 @@ import math
 import random
 import time
 import threading
-import variable as var_
+import minecraft_strike.src.variable as var_
 from pyglet import image
 from pyglet.gl import *
 from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
-import  model as mod_
-import player as plyr_
+import  minecraft_strike.src.model as mod_
+import minecraft_strike.src.player as plyr_
 from PodSixNet.Connection import ConnectionListener#, connection
 import pyglet.app as app_
 #player health is defined in three files player,server,window
 class Window(pyglet.window.Window, ConnectionListener):
 
     def __init__(self,ip = "127.0.0.1",port = 31425, *args, **kwargs):
-        print kwargs
-        print (ip,port)
+        print(kwargs)
+        print(ip,port)
         super(Window, self).__init__(*args, **kwargs)
 
 #######################################
@@ -96,8 +96,8 @@ class Window(pyglet.window.Window, ConnectionListener):
         self.mainid=data["player"]
         self.position_dict[data["player"]] = data["coor"]
         self.running = True
-        print self.mainid
-        print self.player_arr
+        print(self.mainid)
+        print(self.player_arr)
 
     def Network_add(self, data):
       #  self.hand = han_.Handler(data['gameID'], data['player'])
@@ -400,7 +400,7 @@ class Window(pyglet.window.Window, ConnectionListener):
                 thread=var_.RepeatEvery(self.model,self.player_arr[self.mainid])
                 thread.start()
                 del var_.FEATURES[k]
-                print self
+                print(self)
                 self.model.remove_block(k,True,1,self)
                 break
 

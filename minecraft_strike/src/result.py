@@ -1,4 +1,4 @@
-import Tkinter
+import tkinter
 class result:
 
     def __init__(self,mes):

@@ -37,7 +37,7 @@ class ClientChannel(Channel):
     def Network_coor(self,data):
         self._server.key_handle3(data, "visible")
     def Network_username(self, data):
-        print data
+        print(data)
         player_name[data["player"]] = [data["position"],6]
         self._server.key_handle3(data, "user")
 
@@ -50,14 +50,14 @@ def check(arr_):
         return t
 
 class MyServer(Server):
-    
+
     channelClass = ClientChannel
-    
+
     def __init__(self, *args, **kwargs):
         #Call the super constructor
         ip,port = "127.0.0.1", 31425
         if 1 == input("yes = 1 or no = 0"):
-            ip=raw_input("ip")
+            ip=input("ip")
             port=input("port")
         Server.__init__(self,None,(ip, port),*args, **kwargs)
 
@@ -80,10 +80,10 @@ class MyServer(Server):
         t=check(player_arr)
         self.coor.append(t)
         player_name[self.plyr_id] = [None]
-        print player_name
+        print(player_name)
         channel.Send({"action":"init","player":self.plyr_id,"player_arr":player_arr,"coor":(t-69,15,t-69),"name_dict":player_name})
         self.plyr_id+=1
-        print (t-69,15,t-69)
+        print(t-69,15,t-69)
         #When we receive a new connection
         #Check whether there is a game waiting in the queue
         if self.queue == None:
@@ -99,7 +99,7 @@ class MyServer(Server):
             channel.gameID = self.gameIndex
             #Set the second player channel
             self.queue.player_channels.append(channel)
-        print player_arr
+        print(player_arr)
         for i in range(0, len(self.queue.player_channels)-1):
             self.queue.player_channels[i].Send({"action":"add","player":self.plyr_id})
              #   self.queue.player_channels[i].Send({"action":"add","player":self.plyr_id,"gameID":self.queue.gameID})
@@ -145,8 +145,9 @@ class Game(object):
         #Set the game id
         self.gameID = gameIndex
 
-myserver = MyServer()
-while True:
-    myserver.Pump()
-    time.sleep(0.0001)
+def start_server():
+    myserver = MyServer()
+    while True:
+        myserver.Pump()
+        time.sleep(0.0001)
 

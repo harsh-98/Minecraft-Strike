@@ -1,5 +1,5 @@
-import random 
-import variable as var_
+import random
+import minecraft_strike.src.variable as var_
 n = 160  # 1/2 width and height of world
 s = 1  # step size
 y = 0  # initial y height
@@ -44,12 +44,12 @@ for _ in xrange(240):
                 arr_h2.append((x, y, z))
                 arr_h2t.append(t)
         s -= d
-print "arr_h=",
+print("arr_h=", end=''))
 print(arr_h)
-print "arr_ht=",
+print("arr_ht=", end=''))
 print(arr_ht)
-print "arr_h2=",
+print("arr_h2=", end='')
 print(arr_h2)
-print "arr_h2t=",
+print("arr_h2t=", end=''))
 print(arr_h2t)
 

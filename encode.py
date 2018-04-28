@@ -10,13 +10,12 @@ def print_data(data):
     offset = 0
     length = len(data)
     while offset < length:
-        print '    "%s"' % data[offset:offset+size]
+        print('    "%s"' % data[offset:offset+size])
         offset += size
 
 def generate(folder):
-    print '# Automatically generated file!'
-    print 'from wx.lib.embeddedimage import PyEmbeddedImage'
-    print
+    print('# Automatically generated file!')
+    print('from wx.lib.embeddedimage import PyEmbeddedImage')
     for name in os.listdir(folder):
         if name[-4:] not in EXTENSIONS:
             continue
@@ -24,10 +23,9 @@ def generate(folder):
         base = name[:-4]
         with open(path, 'rb') as f:
             encoded = base64.b64encode(f.read())
-            print '%s = PyEmbeddedImage(' % base
+            print('%s = PyEmbeddedImage(' % base)
             print_data(encoded)
-            print ')'
-            print
+            print(')')
 
 if __name__ == '__main__':
     generate('.')
