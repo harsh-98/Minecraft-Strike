@@ -5,7 +5,11 @@ parser = argparse.ArgumentParser(description='Optional app description')
 
 
 def main():
-    parser.add_argument('--server', action='start_server',
+    parser.add_argument('--server', action='store_true',
                     help='A boolean switch')
-    parser.add_argument('--client', action='start_client',
-                    help='A boolean switch')
+
+    args = parser.parse_args()
+    {
+        True: start_server,
+        False: start_client
+    }.get(args.server)()

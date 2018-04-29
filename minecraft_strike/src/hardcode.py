@@ -44,12 +44,12 @@ for _ in xrange(240):
                 arr_h2.append((x, y, z))
                 arr_h2t.append(t)
         s -= d
-print("arr_h=", end=''))
+print("arr_h=",)
 print(arr_h)
-print("arr_ht=", end=''))
+print("arr_ht=",)
 print(arr_ht)
-print("arr_h2=", end='')
+print("arr_h2=",)
 print(arr_h2)
-print("arr_h2t=", end=''))
+print("arr_h2t=",)
 print(arr_h2t)
 

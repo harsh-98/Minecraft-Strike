@@ -1,4 +1,9 @@
-import tkinter
+import sys
+if int(sys.version[0]) == 2:
+    import tkinter as Tkinter
+elif int(sys.version[0]) == 3:
+    import Tkinter
+
 class result:
 
     def __init__(self,mes):

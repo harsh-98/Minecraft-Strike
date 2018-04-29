@@ -57,7 +57,7 @@ class MyServer(Server):
         #Call the super constructor
         ip,port = "127.0.0.1", 31425
         if 1 == input("yes = 1 or no = 0"):
-            ip=input("ip")
+            ip=raw_input("ip")
             port=input("port")
         Server.__init__(self,None,(ip, port),*args, **kwargs)
 

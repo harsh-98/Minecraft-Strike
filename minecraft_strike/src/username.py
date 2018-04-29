@@ -1,9 +1,8 @@
-import tkinter
-
 import sys
-if sys.version_info[0] < 3 or sys.version_info[1] < 3:
-    print("Sorry, minecraft_strike needs python >= 3.3", file=sys.stderr)
-    sys.exit(-1)
+if int(sys.version[0]) == 2:
+    import tkinter as Tkinter
+elif int(sys.version[0]) == 3:
+    import Tkinter
 
 class ip_port:
     def __init__(self,tt):
