@@ -4,8 +4,8 @@
 
 This game is developed using python and [pyglet](https://bitbucket.org/pyglet/pyglet/wiki/Home) just like the original project by [fogleman](https://github.com/fogleman/).
 Now the game is multiplayer and new levels have been added.
-![Air view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/MC-Srtike.png)
-![Ground view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/MC-Strike2.png)
+![Air view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/assets/MC-Srtike.png)
+![Ground view](https://raw.githubusercontent.com/h4r5h-ja1n/Minecraft-Strike/city/assets/MC-Strike2.png)
 
 For client-server scripting, I have used a self-modified version of [PodSixNet](https://github.com/chr15m/PodSixNet).
 

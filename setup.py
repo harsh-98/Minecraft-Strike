@@ -25,7 +25,9 @@ VERSION = "1.0"
 setup(name=NAME,
       version=VERSION,
       description=DESCRIPTION,
+      include_package_data=True,
       packages=find_packages(),
+      package_data = {'assets': ['assets/*']},
       entry_points={
           "console_scripts": ["mstrike = minecraft_strike.arg_handler:main"]
       },
