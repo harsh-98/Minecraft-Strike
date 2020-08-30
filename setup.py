@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 REQUIREMENTS = [
     "pyglet==1.3.1",
-    "PodSixNet==79",
+    "PodSixNet",
 ]
 
 

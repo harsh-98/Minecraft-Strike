@@ -49,17 +49,18 @@ def check(arr_):
             return check(arr_)
         return t
 
-class MyServer(Server):
+class minecraftServer(Server):
 
     channelClass = ClientChannel
 
     def __init__(self, *args, **kwargs):
         #Call the super constructor
-        ip,port = "127.0.0.1", 31425
-        if 1 == input("yes = 1 or no = 0"):
-            ip=raw_input("ip")
-            port=input("port")
-        Server.__init__(self,None,(ip, port),*args, **kwargs)
+        ip = input("ip")
+        if not ip:
+            ip,port = "127.0.0.1", 31425
+        else:
+            port=int(input("port"))
+        Server.__init__(self,None, localaddr=(ip, port),*args, **kwargs)
 
         #Create the objects to hold our game ID and list of running games
         self.games = []
@@ -131,6 +132,10 @@ class MyServer(Server):
             if not i == data["player"]:
                 self.queue.player_channels[i].Send({"action":action,"player":data["player"],"position":data["position"]})
 
+    def loop(self):
+        while True:
+            self.Pump()
+            time.sleep(0.01)
 
 
 #Create the game class to hold information about any particular game
@@ -146,8 +151,5 @@ class Game(object):
         self.gameID = gameIndex
 
 def start_server():
-    myserver = MyServer()
-    while True:
-        myserver.Pump()
-        time.sleep(0.0001)
-
+    server = minecraftServer()
+    server.loop()

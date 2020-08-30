@@ -72,6 +72,7 @@ class structures:
                         self_.add_block((x+i, y+h+5 ,z+j),floor[abs(t-1)],immediate=False)
 
         def tower(self,self_,x,y,z,h,w,l,extra,n=2):
+                # x,y,z,h,w,l = int(x),int(y),int(z),int(h),int(w),int(l)
                 t=7
                 for k in range(y,y+h):
                     for i in range(-l,l+1):
@@ -80,7 +81,7 @@ class structures:
                     for j in range(-w,w+1):
                             self_.add_block((x+l, k ,z+j),var_.TOWER,immediate=False)
                             self_.add_block((x-l, k ,z+j),var_.TOWER,immediate=False)
-                for k in range(y,y+h/2):
+                for k in range(y,int(y+h/2)):
                     for i in range(-l-extra,l+1+extra):
                             self_.add_block((x+i, k, z+w),var_.TOWER,immediate=False)
                             self_.add_block((x+i, k, z-w),var_.TOWER,immediate=False)

@@ -1,22 +1,23 @@
 import sys
-if int(sys.version[0]) == 2:
-    import tkinter as Tkinter
-elif int(sys.version[0]) == 3:
-    import Tkinter
+# if int(sys.version[0]) == 2:
+#     import tkinter as Tkinter
+# elif int(sys.version[0]) == 3:
+#     import Tkinter
+import tkinter as tk
 
 class ip_port:
     def __init__(self,tt):
-        self.window =Tkinter.Tk()
+        self.window =tk.Tk()
         self.window.title("Minecraft-CS")
         self.window.geometry("400x400")
         self.name=0
-        self.labelIp = Tkinter.Label(self.window, text = "IP_ADDR")
-        self.inputIp = Tkinter.Entry(self.window)
-        self.labelPort = Tkinter.Label(self.window, text = "PORT")
-        self.inputPort = Tkinter.Entry(self.window)
-        self.labelName = Tkinter.Label(self.window, text = "YOUR NAME")
-        self.inputName = Tkinter.Entry(self.window)
-        self.button = Tkinter.Button(self.window, text = "GO" ,command = self.exit_)
+        self.labelIp = tk.Label(self.window, text = "IP_ADDR")
+        self.inputIp = tk.Entry(self.window)
+        self.labelPort = tk.Label(self.window, text = "PORT")
+        self.inputPort = tk.Entry(self.window)
+        self.labelName = tk.Label(self.window, text = "YOUR NAME")
+        self.inputName = tk.Entry(self.window)
+        self.button = tk.Button(self.window, text = "GO" ,command = self.exit_)
         self.tt = tt
         self.labelIp.pack()
         self.inputIp.pack()

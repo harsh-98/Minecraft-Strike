@@ -71,8 +71,8 @@ class Model(object):
         n = 80  # 1/2 width and height of world
         s = 1  # step size
         y = 0  # initial y height
-        for x in xrange(-n, n + 1, s):
-            for z in xrange(-n, n + 1, s):
+        for x in range(-n, n + 1, s):
+            for z in range(-n, n + 1, s):
                 # create a layer var_.STONE an var_.GRASS everywhere
                 t=[var_.GRASS1, var_.GRASS2]
                 V= random.randint(0, 1)
@@ -89,7 +89,7 @@ class Model(object):
                     self.add_block((x,-1,z),var_.FLOW2,immediate=False)
                 if x in (-n, n) or z in (-n, n):
                     # create outer walls.
-                    for dy in   xrange(-2, 30):
+                    for dy in   range(-2, 30):
                         self.add_block((x, y + dy, z), var_.STONE, immediate=False)
 #        t=[var_.RSTONE,var_.ALGAE,var_.SNOW, var_.MARBLE]
 #        for d,e in zip(arr_.arr_h, arr_.arr_ht):
@@ -152,7 +152,7 @@ class Model(object):
         x, y, z = position
         dx, dy, dz = vector
         previous = None
-        for _ in xrange(max_distance * m):
+        for _ in range(max_distance * m):
             key = var_.normalize((x, y, z))
             if key != previous and key in self.world:
                 return key, previous
@@ -339,9 +339,9 @@ class Model(object):
         before_set = set()
         after_set = set()
         pad = 4
-        for dx in xrange(-pad, pad + 1):
-            for dy in [0]:  # xrange(-pad, pad + 1):
-                for dz in xrange(-pad, pad + 1):
+        for dx in range(-pad, pad + 1):
+            for dy in [0]:  # range(-pad, pad + 1):
+                for dz in range(-pad, pad + 1):
                     if dx ** 2 + dy ** 2 + dz ** 2 > (pad + 1) ** 2:
                         continue
                     if before:

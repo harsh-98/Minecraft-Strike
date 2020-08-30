@@ -13,3 +13,6 @@ def main():
         True: start_server,
         False: start_client
     }.get(args.server)()
+
+if __name__ == "__main__":
+    main()

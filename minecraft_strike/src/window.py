@@ -10,17 +10,18 @@ from pyglet.graphics import TextureGroup
 from pyglet.window import key, mouse
 import  minecraft_strike.src.model as mod_
 import minecraft_strike.src.player as plyr_
-from PodSixNet.Connection import ConnectionListener#, connection
+from PodSixNet.Connection import ConnectionListener
+from PodSixNet.EndPoint import EndPoint
 import pyglet.app as app_
 #player health is defined in three files player,server,window
 class Window(pyglet.window.Window, ConnectionListener):
 
-    def __init__(self,ip = "127.0.0.1",port = 31425, *args, **kwargs):
+    def __init__(self,ip,port, *args, **kwargs):
         print(kwargs)
-        print(ip,port)
         super(Window, self).__init__(*args, **kwargs)
 
 #######################################
+        # self.connection = ConnectionListener()
         self.Connect((ip, port))
         self.player_arr={}
         self.mainid=-1
@@ -74,8 +75,8 @@ class Window(pyglet.window.Window, ConnectionListener):
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
             color=(0, 0, 0, 255))
         while not self.running:
-       #     print self.running
-            self.connection.Pump()
+            print("running")     
+            # self.connection.Pump()
             self.Pump()
         # This call schedules the `update()` method to be called
         # var_.TICKS_PER_SEC. This is the main game event loop.
@@ -86,7 +87,7 @@ class Window(pyglet.window.Window, ConnectionListener):
 
 
     def i(self):
-        self.connection.Pump()
+        # self.connection.Pump()
         self.Pump()
     def Network_init(self,data):
     #    print "asdfghjk"
@@ -516,6 +517,7 @@ class Window(pyglet.window.Window, ConnectionListener):
         self.clear()
         self.set_3d()
         glColor3d(1, 1, 1)
+        print("draw")
         self.model.batch.draw()
         self.draw_focused_block()
         self.set_2d()

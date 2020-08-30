@@ -1,2 +1,2 @@
-PodSixNet==79
+PodSixNet
 pyglet==1.2.4
